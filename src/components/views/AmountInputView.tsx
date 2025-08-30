@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight, Leaf } from 'lucide-react';
+import AddressDisplay from '../AddressDisplay';
 
 interface AmountInputViewProps {
   pixKey: string;
@@ -50,16 +51,7 @@ export default function AmountInputView({ pixKey, onBack, onNext }: AmountInputV
     }
   };
 
-  const formatRecipient = (key: string) => {
-    if (key.includes('@')) return key;
-    if (key.length === 11) {
-      return key.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.***.***-$4');
-    }
-    if (key.length === 14) {
-      return key.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.***.***/$4-$5');
-    }
-    return key.substring(0, 8) + '...' + key.substring(key.length - 4);
-  };
+  // Função formatRecipient substituída pelo componente AddressDisplay
 
   const isValidAmount = parseFloat(amount) > 0;
 
@@ -87,7 +79,10 @@ export default function AmountInputView({ pixKey, onBack, onNext }: AmountInputV
             Destinatário
           </label>
           <p className="text-lg font-semibold text-gray-800">
-            {formatRecipient(pixKey)}
+            <AddressDisplay 
+              address={pixKey} 
+              showIcons={true}
+            />
           </p>
         </div>
 

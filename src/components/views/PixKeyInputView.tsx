@@ -44,22 +44,8 @@ export default function PixKeyInputView({ onBack, onNext }: PixKeyInputViewProps
     }
   };
 
-  const formatPixKey = (value: string) => {
-    // Remove caracteres não permitidos
-    let formatted = value.replace(/[^a-zA-Z0-9@.-]/g, '');
-    
-    // Se for CPF, formatar com pontos e hífen
-    if (/^\d{11}$/.test(formatted)) {
-      formatted = formatted.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-    }
-    
-    // Se for CNPJ, formatar com pontos, barra e hífen
-    if (/^\d{14}$/.test(formatted)) {
-      formatted = formatted.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
-    }
-    
-    return formatted;
-  };
+  // Função formatPixKey não é mais necessária pois usamos o componente AddressDisplay
+  // para exibir endereços formatados
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;

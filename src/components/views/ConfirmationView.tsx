@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Send, Eye, EyeOff } from 'lucide-react';
+import AddressDisplay from '../AddressDisplay';
 
 interface ConfirmationViewProps {
   recipient: string;
@@ -34,16 +35,7 @@ export default function ConfirmationView({ recipient, amount, recipientName, onB
     }, 2000);
   };
 
-  const formatRecipient = (key: string) => {
-    if (key.includes('@')) return key;
-    if (key.length === 11) {
-      return key.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.***.***-$4');
-    }
-    if (key.length === 14) {
-      return key.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.***.***/$4-$5');
-    }
-    return key.substring(0, 8) + '...' + key.substring(key.length - 4);
-  };
+  // Função formatRecipient substituída pelo componente AddressDisplay
 
   return (
     <div className="p-4">
@@ -70,11 +62,19 @@ export default function ConfirmationView({ recipient, amount, recipientName, onB
               Destinatário
             </label>
             <p className="text-lg font-semibold text-gray-800">
-              {recipientName || formatRecipient(recipient)}
+              {recipientName || (
+                <AddressDisplay 
+                  address={recipient} 
+                  showIcons={false}
+                />
+              )}
             </p>
             {recipientName && (
               <p className="text-sm text-gray-500 mt-1">
-                {formatRecipient(recipient)}
+                <AddressDisplay 
+                  address={recipient} 
+                  showIcons={true}
+                />
               </p>
             )}
           </div>
