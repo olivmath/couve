@@ -22,10 +22,45 @@ export default function QRScannerView({ onBack, onScanSuccess }: QRScannerViewPr
     };
   }, []);
 
+  const getDetailedCameraError = (error: any): string => {
+    const errorName = error?.name || '';
+    const errorMessage = error?.message || '';
+    
+    console.log('Camera error details:', { name: errorName, message: errorMessage, error });
+    
+    switch (errorName) {
+      case 'NotAllowedError':
+        return 'Permissão da câmera negada. Para habilitar no iPhone: Configurações > Safari > Câmera > Permitir';
+      case 'NotFoundError':
+        return 'Nenhuma câmera encontrada no dispositivo.';
+      case 'NotReadableError':
+        return 'Câmera está sendo usada por outro aplicativo. Feche outros apps que possam estar usando a câmera.';
+      case 'OverconstrainedError':
+        return 'Configurações da câmera não suportadas. Tentando com configurações básicas...';
+      case 'SecurityError':
+        return 'Acesso à câmera bloqueado por questões de segurança. Certifique-se de estar usando HTTPS.';
+      case 'AbortError':
+        return 'Operação da câmera foi interrompida.';
+      default:
+        if (errorMessage.includes('Permission denied')) {
+          return 'Permissão da câmera negada. Para habilitar no iPhone: Configurações > Safari > Câmera > Permitir';
+        }
+        if (errorMessage.includes('not supported') || errorMessage.includes('não suportada')) {
+           return 'API de câmera não suportada neste navegador. Use Safari, Chrome ou Firefox atualizados.';
+         }
+         return `Erro ao acessar câmera: ${errorMessage || 'Erro desconhecido'}. Verifique as permissões e tente novamente.`;
+    }
+  };
+
   const startCamera = async () => {
     try {
       setError(null);
       setIsScanning(true);
+      
+      // Primeiro, verificar se a API está disponível
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('API de câmera não suportada neste navegador');
+      }
       
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
@@ -44,7 +79,29 @@ export default function QRScannerView({ onBack, onScanSuccess }: QRScannerViewPr
     } catch (err) {
       console.error('Error accessing camera:', err);
       setHasPermission(false);
-      setError('Não foi possível acessar a câmera. Verifique as permissões.');
+      
+      // Se for erro de configuração, tentar com configurações mais básicas
+      if (err instanceof Error && err.name === 'OverconstrainedError') {
+        try {
+          const basicStream = await navigator.mediaDevices.getUserMedia({
+            video: true
+          });
+          
+          streamRef.current = basicStream;
+          setHasPermission(true);
+          setIsScanning(true);
+          
+          if (videoRef.current) {
+            videoRef.current.srcObject = basicStream;
+          }
+          return;
+        } catch (basicErr) {
+          setError(getDetailedCameraError(basicErr));
+        }
+      } else {
+        setError(getDetailedCameraError(err));
+      }
+      
       setIsScanning(false);
     }
   };
@@ -108,18 +165,82 @@ export default function QRScannerView({ onBack, onScanSuccess }: QRScannerViewPr
               </div>
               
               {error && (
-                <div className="bg-red-500 text-white p-4 rounded-lg text-center">
-                  <p>{error}</p>
+                <div className="bg-red-500 text-white p-4 rounded-lg text-left space-y-3">
+                  <p className="font-semibold">{error}</p>
+                  
+                  {(error.includes('Permissão') || error.includes('Permission')) && (
+                    <div className="bg-red-600 p-3 rounded text-sm space-y-2">
+                      <p className="font-semibold">📱 Como habilitar a câmera:</p>
+                      <div className="space-y-1">
+                        <p><strong>iPhone/iPad (Safari):</strong></p>
+                        <p>1. Configurações → Safari → Câmera → Permitir</p>
+                        <p>2. Ou toque no ícone "aA" na barra de endereço → Configurações do site → Câmera → Permitir</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p><strong>Chrome/Firefox:</strong></p>
+                        <p>1. Toque no ícone de cadeado/câmera na barra de endereço</p>
+                        <p>2. Selecione "Permitir" para câmera</p>
+                      </div>
+                      <p className="text-yellow-200">💡 Dica: Recarregue a página após alterar as permissões</p>
+                    </div>
+                  )}
+                  
+                  {error.includes('HTTPS') && (
+                    <div className="bg-red-600 p-3 rounded text-sm">
+                      <p>🔒 <strong>Problema de segurança:</strong></p>
+                      <p>A câmera só funciona em sites seguros (HTTPS). Certifique-se de que a URL começa com "https://"</p>
+                    </div>
+                  )}
+                  
+                  {error.includes('outro aplicativo') && (
+                     <div className="bg-red-600 p-3 rounded text-sm">
+                       <p>📱 <strong>Câmera em uso:</strong></p>
+                       <p>Feche outros aplicativos que possam estar usando a câmera (Instagram, TikTok, Zoom, etc.)</p>
+                     </div>
+                   )}
+                   
+                   {(error.includes('não suportada') || error.includes('not supported')) && (
+                     <div className="bg-red-600 p-3 rounded text-sm space-y-2">
+                       <p>🌐 <strong>Navegador não compatível:</strong></p>
+                       <div className="space-y-1">
+                         <p><strong>Navegadores recomendados:</strong></p>
+                         <p>• Safari (iOS 11+)</p>
+                         <p>• Chrome (Android/iOS)</p>
+                         <p>• Firefox (Android/iOS)</p>
+                         <p>• Edge (Windows/Android)</p>
+                       </div>
+                       <div className="space-y-1">
+                         <p><strong>Alternativas:</strong></p>
+                         <p>• Atualize seu navegador para a versão mais recente</p>
+                         <p>• Tente abrir em outro navegador</p>
+                         <p>• Use o botão "Simular Escaneamento" para testar</p>
+                       </div>
+                     </div>
+                   )}
                 </div>
               )}
               
-              <button
-                onClick={startCamera}
-                className="bg-gradient-to-r from-green-600 to-green-700 text-white py-4 px-8 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all text-lg flex items-center"
-              >
-                <Camera className="h-5 w-5 mr-2" />
-                Abrir Câmera
-              </button>
+              <div className="flex flex-col space-y-3">
+                <button
+                  onClick={startCamera}
+                  className="bg-gradient-to-r from-green-600 to-green-700 text-white py-4 px-8 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all text-lg flex items-center justify-center"
+                >
+                  <Camera className="h-5 w-5 mr-2" />
+                  {error ? 'Tentar Novamente' : 'Abrir Câmera'}
+                </button>
+                
+                {error && (
+                  <button
+                    onClick={() => {
+                      setError(null);
+                      setHasPermission(null);
+                    }}
+                    className="bg-gray-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-gray-700 transition-all text-sm"
+                  >
+                    Limpar Erro
+                  </button>
+                )}
+              </div>
             </div>
           )}
           
