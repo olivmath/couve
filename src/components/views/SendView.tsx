@@ -1,150 +1,96 @@
-import { ArrowRight, Leaf, Sprout, Send, QrCode, Clipboard, Keyboard } from 'lucide-react';
-import { Button } from '../ui/button';
-import { Card } from '../ui/card';
+import React from 'react';
+import { ArrowLeft, QrCode, Clipboard, Keyboard, Leaf } from 'lucide-react';
 import { ViewType } from '../../hooks/useWallet';
 
 interface SendViewProps {
-  pixAmount: string;
-  pixKey: string;
   balance: number;
   kaleToBRL: number;
-  isProcessing: boolean;
-  onPixAmountChange: (value: string) => void;
-  onPixKeyChange: (value: string) => void;
-  onSendPIX: () => void;
   onNavigate: (view: ViewType) => void;
-  canSend: boolean;
+  startQRScan: () => void;
+  startPixKeyInput: () => void;
+  handlePastePixKey: () => void;
 }
 
-export const SendView = ({
-  pixAmount,
-  pixKey,
+export function SendView({
   balance,
   kaleToBRL,
-  isProcessing,
-  onPixAmountChange,
-  onPixKeyChange,
-  onSendPIX,
   onNavigate,
-  canSend
-}: SendViewProps) => {
+  startQRScan,
+  startPixKeyInput,
+  handlePastePixKey
+}: SendViewProps) {
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between mb-4">
-        <Button 
-          onClick={() => onNavigate('home')}
-          variant="ghost"
-          className="text-green-600 font-medium flex items-center p-0"
-        >
-          <ArrowRight className="h-4 w-4 rotate-180 mr-1" />
-          Back
-        </Button>
-        <h2 className="text-xl font-bold text-gray-800 flex items-center">
-          <Leaf className="h-6 w-6 text-green-600 mr-2" />
-          Pay with KALE
-        </h2>
-        <div></div>
-      </div>
-
-      <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg p-4">
-        <div className="flex items-center space-x-2 mb-2">
-          <Sprout className="h-5 w-5 text-green-600" />
-          <p className="font-semibold text-green-800">Instant cultivated payment</p>
+    <div className="p-4">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={() => onNavigate('home')}
+            className="justify-center whitespace-nowrap rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 text-green-600 font-medium flex items-center p-0"
+          >
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            Back
+          </button>
+          <h2 className="text-xl font-bold text-gray-800 flex items-center">
+            <Leaf className="h-6 w-6 text-green-600 mr-2" />
+            Pay with KALE
+          </h2>
+          <div></div>
         </div>
-        <p className="text-green-700 text-sm">Current rate: 1 KALE = R$ {kaleToBRL.toFixed(2)} 🌱</p>
-      </Card>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Amount in BRL</label>
-        <input
-          type="number"
-          value={pixAmount}
-          onChange={(e) => onPixAmountChange(e.target.value)}
-          placeholder="0.00"
-          className="w-full p-4 text-2xl font-semibold border-2 border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-        />
-        {pixAmount && (
-          <p className="text-sm text-gray-600 mt-2 flex items-center">
-            <Leaf className="h-4 w-4 text-green-500 mr-1" />
-            Will be harvested: {(parseFloat(pixAmount) / kaleToBRL).toFixed(2)} KALE
+        {/* Balance Info */}
+        <div className="bg-green-50 rounded-lg p-4">
+          <p className="text-sm text-gray-600 mb-1">Saldo disponível</p>
+          <p className="text-2xl font-bold text-green-600">
+            {balance.toFixed(2)} KALE
           </p>
-        )}
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-3">Recipient's PIX Key</label>
-        
-        {/* PIX Input Options */}
-        <div className="grid grid-cols-3 gap-2 mb-4">
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex flex-col items-center p-3 h-auto border-2 border-green-300 hover:bg-green-50"
-            onClick={() => alert('QR Code scanner would open here')}
-          >
-            <QrCode className="h-5 w-5 text-green-600 mb-1" />
-            <span className="text-xs">Scan QR</span>
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex flex-col items-center p-3 h-auto border-2 border-green-300 hover:bg-green-50"
-            onClick={async () => {
-              try {
-                const text = await navigator.clipboard.readText();
-                onPixKeyChange(text);
-              } catch (err) {
-                alert('Unable to read clipboard');
-              }
-            }}
-          >
-            <Clipboard className="h-5 w-5 text-green-600 mb-1" />
-            <span className="text-xs">Paste</span>
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex flex-col items-center p-3 h-auto border-2 border-green-300 hover:bg-green-50"
-            onClick={() => document.getElementById('pix-input')?.focus()}
-          >
-            <Keyboard className="h-5 w-5 text-green-600 mb-1" />
-            <span className="text-xs">Type</span>
-          </Button>
+          <p className="text-sm text-gray-500">
+            ≈ R$ {(balance * kaleToBRL).toFixed(2)}
+          </p>
         </div>
-        
-        <input
-          id="pix-input"
-          type="text"
-          value={pixKey}
-          onChange={(e) => onPixKeyChange(e.target.value)}
-          placeholder="CPF, email, phone or random key"
-          className="w-full p-3 border-2 border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-        />
+
+        {/* PIX Options */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            Como você quer pagar?
+          </label>
+          <div className="grid grid-cols-3 gap-2">
+            <button
+              onClick={startQRScan}
+              className="justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-background hover:text-accent-foreground rounded-md flex flex-col items-center p-3 h-auto border-2 transition-colors border-green-300 hover:bg-green-50"
+            >
+              <QrCode className="h-5 w-5 mb-1" />
+              <span className="text-xs">Scan QR</span>
+            </button>
+            
+            <button
+              onClick={handlePastePixKey}
+              className="justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-background hover:text-accent-foreground rounded-md flex flex-col items-center p-3 h-auto border-2 transition-colors border-green-300 hover:bg-green-50"
+            >
+              <Clipboard className="h-5 w-5 mb-1" />
+              <span className="text-xs">Paste</span>
+            </button>
+            
+            <button
+              onClick={startPixKeyInput}
+              className="justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-background hover:text-accent-foreground rounded-md flex flex-col items-center p-3 h-auto border-2 transition-colors border-green-300 hover:bg-green-50"
+            >
+              <Keyboard className="h-5 w-5 mb-1" />
+              <span className="text-xs">Type</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Instructions */}
+        <div className="bg-gray-50 rounded-lg p-4">
+          <h3 className="text-sm font-medium text-gray-700 mb-2">Como funciona:</h3>
+          <ul className="text-sm text-gray-600 space-y-1">
+            <li>• <strong>Scan QR:</strong> Escaneie um QR Code PIX</li>
+            <li>• <strong>Paste:</strong> Cole uma chave PIX da área de transferência</li>
+            <li>• <strong>Type:</strong> Digite manualmente a chave PIX</li>
+          </ul>
+        </div>
       </div>
-
-      <Button
-        onClick={onSendPIX}
-        disabled={!canSend || isProcessing}
-        className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-4 px-4 rounded-lg font-semibold disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed hover:from-green-700 hover:to-green-800 transition-all text-lg flex items-center justify-center"
-      >
-        {isProcessing ? (
-          <>
-            <Sprout className="animate-spin h-5 w-5 mr-2" />
-            Cultivating payment...
-          </>
-        ) : (
-          <>
-            <Send className="h-5 w-5 mr-2" />
-            Pay R$ {pixAmount || '0.00'}
-          </>
-        )}
-      </Button>
-
-      {!canSend && pixAmount && pixKey && (
-        <Card className="bg-red-50 border border-red-200 rounded-lg p-3">
-          <p className="text-red-600 text-sm text-center">🚫 Insufficient KALE for this harvest</p>
-        </Card>
-      )}
     </div>
   );
-};
+}

@@ -5,6 +5,10 @@ import { DepositView } from './components/views/DepositView';
 import { HistoryView } from './components/views/HistoryView';
 import { SuccessView } from './components/views/SuccessView';
 import ProfileView from './components/views/ProfileView';
+import QRScannerView from './components/views/QRScannerView';
+import PixKeyInputView from './components/views/PixKeyInputView';
+import AmountInputView from './components/views/AmountInputView';
+import ConfirmationView from './components/views/ConfirmationView';
 import BottomNavigation from './components/BottomNavigation';
 import { useWallet } from './hooks/useWallet';
 
@@ -18,10 +22,17 @@ function App() {
     qrCodeData,
     kaleToBRL,
     transactions,
+    paymentData,
     setPixAmount,
     setPixKey,
     handleSendPIX,
-    setCurrentView
+    setCurrentView,
+    startQRScan,
+    startPixKeyInput,
+    handleQRScanSuccess,
+    handlePastePixKey,
+    handlePixKeySubmit,
+    handleAmountSubmit
   } = useWallet();
 
   const renderCurrentView = () => {
@@ -42,14 +53,10 @@ function App() {
           <SendView
             balance={balance}
             kaleToBRL={kaleToBRL}
-            pixAmount={pixAmount}
-            pixKey={pixKey}
-            isProcessing={isProcessing}
-            onPixAmountChange={setPixAmount}
-            onPixKeyChange={setPixKey}
-            onSendPIX={handleSendPIX}
             onNavigate={setCurrentView}
-            canSend={!!pixAmount && !!pixKey && parseFloat(pixAmount) > 0 && (parseFloat(pixAmount) / kaleToBRL) <= balance}
+            startQRScan={startQRScan}
+            startPixKeyInput={startPixKeyInput}
+            handlePastePixKey={handlePastePixKey}
           />
         );
       case 'deposit':
@@ -73,6 +80,38 @@ function App() {
             kaleToBRL={kaleToBRL}
           />
         );
+      case 'qr_scanner':
+        return (
+          <QRScannerView
+            onBack={() => setCurrentView('send')}
+            onScanSuccess={handleQRScanSuccess}
+          />
+        );
+      case 'pix_key_input':
+        return (
+          <PixKeyInputView
+            onBack={() => setCurrentView('send')}
+            onNext={handlePixKeySubmit}
+          />
+        );
+      case 'amount_input':
+         return (
+           <AmountInputView
+             pixKey={paymentData?.pixKey || ''}
+             onBack={() => setCurrentView('pix_key_input')}
+             onNext={handleAmountSubmit}
+           />
+         );
+      case 'confirmation':
+          return (
+            <ConfirmationView
+              recipient={paymentData?.pixKey || ''}
+              amount={paymentData?.amount || '0'}
+              recipientName={paymentData?.recipientName}
+              onBack={() => setCurrentView('send')}
+              onConfirm={handleSendPIX}
+            />
+          );
       case 'success':
         return (
           <SuccessView

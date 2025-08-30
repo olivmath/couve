@@ -1,0 +1,141 @@
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+
+interface PixKeyInputViewProps {
+  onBack: () => void;
+  onNext: (pixKey: string) => void;
+}
+
+export default function PixKeyInputView({ onBack, onNext }: PixKeyInputViewProps) {
+  const [pixKey, setPixKey] = useState('');
+  const [isValid, setIsValid] = useState(false);
+
+  const isValidPixKey = (key: string): boolean => {
+    if (!key) return false;
+    
+    // Remove espaços e caracteres especiais para validação
+    const cleanKey = key.replace(/[^a-zA-Z0-9@.-]/g, '');
+    
+    // CPF (11 dígitos)
+    if (/^\d{11}$/.test(cleanKey)) return true;
+    
+    // CNPJ (14 dígitos)
+    if (/^\d{14}$/.test(cleanKey)) return true;
+    
+    // Email
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanKey)) return true;
+    
+    // Telefone (10 ou 11 dígitos com DDD)
+    if (/^\d{10,11}$/.test(cleanKey)) return true;
+    
+    // Chave aleatória (32 caracteres)
+    if (/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(cleanKey)) return true;
+    
+    return false;
+  };
+
+  useEffect(() => {
+    setIsValid(isValidPixKey(pixKey));
+  }, [pixKey]);
+
+  const handleNext = () => {
+    if (isValid) {
+      onNext(pixKey);
+    }
+  };
+
+  const formatPixKey = (value: string) => {
+    // Remove caracteres não permitidos
+    let formatted = value.replace(/[^a-zA-Z0-9@.-]/g, '');
+    
+    // Se for CPF, formatar com pontos e hífen
+    if (/^\d{11}$/.test(formatted)) {
+      formatted = formatted.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    }
+    
+    // Se for CNPJ, formatar com pontos, barra e hífen
+    if (/^\d{14}$/.test(formatted)) {
+      formatted = formatted.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+    }
+    
+    return formatted;
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPixKey(value);
+  };
+
+  const getPlaceholder = () => {
+    return 'CPF, CNPJ, e-mail, telefone ou chave aleatória';
+  };
+
+  return (
+    <div className="p-4">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={onBack}
+            className="justify-center whitespace-nowrap rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 text-green-600 font-medium flex items-center p-0"
+          >
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            Back
+          </button>
+          <h2 className="text-xl font-bold text-gray-800">
+            Chave PIX
+          </h2>
+          <div></div>
+        </div>
+
+        {/* PIX Key Input */}
+        <div className="space-y-4">
+          <label className="block text-sm font-medium text-gray-700">
+            Digite a chave PIX do destinatário
+          </label>
+          <input
+            type="text"
+            value={pixKey}
+            onChange={handleInputChange}
+            placeholder={getPlaceholder()}
+            className="w-full p-4 text-lg border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+            autoFocus
+          />
+          
+          {pixKey && !isValid && (
+            <p className="text-sm text-red-600">
+              Chave PIX inválida. Verifique o formato.
+            </p>
+          )}
+          
+          {isValid && (
+            <p className="text-sm text-green-600 flex items-center">
+              ✓ Chave PIX válida
+            </p>
+          )}
+        </div>
+
+        {/* Examples */}
+        <div className="bg-gray-50 rounded-lg p-4">
+          <h3 className="text-sm font-medium text-gray-700 mb-2">Exemplos de chaves PIX:</h3>
+          <ul className="text-sm text-gray-600 space-y-1">
+            <li>• CPF: 123.456.789-00</li>
+            <li>• E-mail: usuario@email.com</li>
+            <li>• Telefone: 11987654321</li>
+            <li>• Chave aleatória: 12345678-1234-1234-1234-123456789012</li>
+          </ul>
+        </div>
+
+        {/* Next Button */}
+        <button
+          onClick={handleNext}
+          disabled={!isValid}
+          className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-4 px-4 rounded-lg font-semibold disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed hover:from-green-700 hover:to-green-800 transition-all text-lg flex items-center justify-center"
+        >
+          Próximo
+          <ArrowRight className="h-5 w-5 ml-2" />
+        </button>
+      </div>
+    </div>
+  );
+}
