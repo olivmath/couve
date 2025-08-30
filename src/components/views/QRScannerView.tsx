@@ -3,7 +3,7 @@ import { ArrowLeft, Camera, X } from 'lucide-react';
 
 interface QRScannerViewProps {
   onBack: () => void;
-  onScanSuccess: (pixKey: string, amount?: string) => void;
+  onScanSuccess: (qrData: string) => void;
 }
 
 export default function QRScannerView({ onBack, onScanSuccess }: QRScannerViewProps) {
@@ -58,15 +58,12 @@ export default function QRScannerView({ onBack, onScanSuccess }: QRScannerViewPr
   };
 
   const simulateQRScan = () => {
-    // Simular escaneamento de QR code com dados fictícios
-    const mockPixData = {
-      pixKey: '11987654321',
-      amount: '25.00'
-    };
+    // Simular escaneamento de QR code com payload PIX real
+    const mockPixPayload = '00020126580014br.gov.bcb.pix013611987654321520400005303986540525.005802BR5913LUCAS BISPO DE6009SAO PAULO62070503***6304A1B2';
     
     setTimeout(() => {
       stopCamera();
-      onScanSuccess(mockPixData.pixKey, mockPixData.amount);
+      onScanSuccess(mockPixPayload);
     }, 2000);
   };
 
