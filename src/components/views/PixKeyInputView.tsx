@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { useWalletStore } from '../../stores/useWalletStore';
 
-interface PixKeyInputViewProps {
-  onBack: () => void;
-  onNext: (pixKey: string) => void;
-}
-
-export default function PixKeyInputView({ onBack, onNext }: PixKeyInputViewProps) {
+export default function PixKeyInputView() {
+  const { setCurrentView, handlePixKeySubmit } = useWalletStore();
   const [pixKey, setPixKey] = useState('');
   const [isValid, setIsValid] = useState(false);
 
@@ -40,12 +37,9 @@ export default function PixKeyInputView({ onBack, onNext }: PixKeyInputViewProps
 
   const handleNext = () => {
     if (isValid) {
-      onNext(pixKey);
+      handlePixKeySubmit(pixKey);
     }
   };
-
-  // Função formatPixKey não é mais necessária pois usamos o componente AddressDisplay
-  // para exibir endereços formatados
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -62,7 +56,7 @@ export default function PixKeyInputView({ onBack, onNext }: PixKeyInputViewProps
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <button
-            onClick={onBack}
+            onClick={() => setCurrentView('send')}
             className="justify-center whitespace-nowrap rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 text-green-600 font-medium flex items-center p-0"
           >
             <ArrowLeft className="h-4 w-4 mr-1" />

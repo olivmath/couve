@@ -2,13 +2,10 @@ import React from 'react';
 import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { User, Settings, Shield, HelpCircle, LogOut, Leaf, Star } from 'lucide-react';
+import { useWalletStore } from '../../stores/useWalletStore';
 
-interface ProfileViewProps {
-  balance: number;
-  kaleToBRL: number;
-}
-
-const ProfileView: React.FC<ProfileViewProps> = ({ balance, kaleToBRL }) => {
+const ProfileView: React.FC = () => {
+  const { balance, kaleToBRL } = useWalletStore();
   const brlBalance = balance * kaleToBRL;
   
   const menuItems = [

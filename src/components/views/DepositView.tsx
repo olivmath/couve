@@ -1,19 +1,17 @@
 import { ArrowRight, Truck, Sprout, Leaf } from "lucide-react";
 import { Button } from "../ui/button";
-import { ViewType } from "../../hooks/useWallet";
 import AddressQRCode from "../AddressQRCode";
 import AddressDisplay from "../AddressDisplay";
+import { useWalletStore } from "../../stores/useWalletStore";
 
-interface DepositViewProps {
-  onNavigate: (view: ViewType) => void;
-}
+export const DepositView = () => {
+  const { setCurrentView } = useWalletStore();
 
-export const DepositView = ({ onNavigate }: DepositViewProps) => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-4">
         <Button
-          onClick={() => onNavigate("home")}
+          onClick={() => setCurrentView("home")}
           variant="ghost"
           className="text-green-600 font-medium flex items-center p-0"
         >
@@ -50,3 +48,5 @@ export const DepositView = ({ onNavigate }: DepositViewProps) => {
     </div>
   );
 };
+
+export default DepositView;

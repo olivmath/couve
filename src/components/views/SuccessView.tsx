@@ -1,15 +1,12 @@
+import React from 'react';
 import { Sprout, Truck } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
-import { ViewType } from '../../hooks/useWallet';
+import { useWalletStore } from '../../stores/useWalletStore';
 
-interface SuccessViewProps {
-  pixAmount: string;
-  kaleToBRL: number;
-  onNavigate: (view: ViewType) => void;
-}
+export const SuccessView = () => {
+  const { pixAmount, kaleToBRL, setCurrentView } = useWalletStore();
 
-export const SuccessView = ({ pixAmount, kaleToBRL, onNavigate }: SuccessViewProps) => {
   return (
     <div className="space-y-6 text-center py-8">
       <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg p-6">
@@ -26,7 +23,7 @@ export const SuccessView = ({ pixAmount, kaleToBRL, onNavigate }: SuccessViewPro
       </Card>
 
       <Button
-        onClick={() => onNavigate('home')}
+        onClick={() => setCurrentView('home')}
         className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all flex items-center justify-center"
       >
         <Truck className="h-5 w-5 mr-2" />
@@ -35,3 +32,5 @@ export const SuccessView = ({ pixAmount, kaleToBRL, onNavigate }: SuccessViewPro
     </div>
   );
 };
+
+export default SuccessView;

@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Camera, X } from 'lucide-react';
+import { useWalletStore } from '../../stores/useWalletStore';
 
-interface QRScannerViewProps {
-  onBack: () => void;
-  onScanSuccess: (qrData: string) => void;
-}
-
-export default function QRScannerView({ onBack, onScanSuccess }: QRScannerViewProps) {
+export default function QRScannerView() {
+  const { setCurrentView, handleQRScanSuccess } = useWalletStore();
   const [isScanning, setIsScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
@@ -120,13 +117,13 @@ export default function QRScannerView({ onBack, onScanSuccess }: QRScannerViewPr
     
     setTimeout(() => {
       stopCamera();
-      onScanSuccess(mockPixPayload);
+      handleQRScanSuccess(mockPixPayload);
     }, 2000);
   };
 
   const handleBack = () => {
     stopCamera();
-    onBack();
+    setCurrentView('send');
   };
 
   return (

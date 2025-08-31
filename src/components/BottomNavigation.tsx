@@ -1,13 +1,10 @@
 import React from 'react';
 import { Home, FileText, User } from 'lucide-react';
-import { ViewType } from '../hooks/useWallet';
+import { useWalletStore } from '../stores/useWalletStore';
 
-interface BottomNavigationProps {
-  currentView: ViewType;
-  onNavigate: (view: ViewType) => void;
-}
-
-const BottomNavigation: React.FC<BottomNavigationProps> = ({ currentView, onNavigate }) => {
+export const BottomNavigation: React.FC = () => {
+  const { currentView, setCurrentView } = useWalletStore();
+  
   const navItems = [
     {
       id: 'home',
@@ -36,7 +33,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ currentView, onNavi
           return (
             <button
               key={item.id}
-              onClick={() => onNavigate(item.id as ViewType)}
+              onClick={() => setCurrentView(item.id as any)}
               className={`flex flex-col items-center py-2 px-3 rounded-lg transition-all duration-200 ${
                 isActive 
                   ? 'bg-green-100 text-green-700' 
@@ -58,5 +55,3 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ currentView, onNavi
     </div>
   );
 };
-
-export default BottomNavigation;

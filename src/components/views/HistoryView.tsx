@@ -1,20 +1,16 @@
 import { ArrowRight, History, Sprout, Send } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
-import { ViewType, Transaction } from '../../hooks/useWallet';
+import { useWalletStore } from '../../stores/useWalletStore';
 
-interface HistoryViewProps {
-  transactions: Transaction[];
-  kaleToBRL: number;
-  onNavigate: (view: ViewType) => void;
-}
-
-export const HistoryView = ({ transactions, kaleToBRL, onNavigate }: HistoryViewProps) => {
+export const HistoryView = () => {
+  const { transactions, kaleToBRL, setCurrentView } = useWalletStore();
+  
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-4">
         <Button 
-          onClick={() => onNavigate('home')}
+          onClick={() => setCurrentView('home')}
           variant="ghost"
           className="text-green-600 font-medium flex items-center p-0"
         >
@@ -67,3 +63,5 @@ export const HistoryView = ({ transactions, kaleToBRL, onNavigate }: HistoryView
     </div>
   );
 };
+
+export default HistoryView;

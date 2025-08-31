@@ -1,16 +1,10 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Send, Eye, EyeOff } from 'lucide-react';
 import AddressDisplay from '../AddressDisplay';
+import { useWalletStore } from '../../stores/useWalletStore';
 
-interface ConfirmationViewProps {
-  recipient: string;
-  amount: string;
-  recipientName?: string;
-  onBack: () => void;
-  onConfirm: () => void;
-}
-
-export default function ConfirmationView({ recipient, amount, recipientName, onBack, onConfirm }: ConfirmationViewProps) {
+export default function ConfirmationView() {
+  const { paymentData, setCurrentView, handleSendPIX } = useWalletStore();
   const [showPasswordInput, setShowPasswordInput] = useState(false);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -31,11 +25,9 @@ export default function ConfirmationView({ recipient, amount, recipientName, onB
     // Simular processamento
     setTimeout(() => {
       setIsProcessing(false);
-      onConfirm();
+      handleSendPIX();
     }, 2000);
   };
-
-  // Função formatRecipient substituída pelo componente AddressDisplay
 
   return (
     <div className="p-4">
@@ -43,7 +35,7 @@ export default function ConfirmationView({ recipient, amount, recipientName, onB
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <button
-            onClick={onBack}
+            onClick={() => setCurrentView('send')}
             className="justify-center whitespace-nowrap rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 text-green-600 font-medium flex items-center p-0"
           >
             <ArrowLeft className="h-4 w-4 mr-1" />
@@ -62,17 +54,17 @@ export default function ConfirmationView({ recipient, amount, recipientName, onB
               Destinatário
             </label>
             <p className="text-lg font-semibold text-gray-800">
-              {recipientName || (
+              {paymentData?.recipientName || (
                 <AddressDisplay 
-                  address={recipient} 
+                  address={paymentData?.pixKey || ''} 
                   showIcons={false}
                 />
               )}
             </p>
-            {recipientName && (
+            {paymentData?.recipientName && (
               <p className="text-sm text-gray-500 mt-1">
                 <AddressDisplay 
-                  address={recipient} 
+                  address={paymentData?.pixKey || ''} 
                   showIcons={true}
                 />
               </p>
@@ -84,7 +76,7 @@ export default function ConfirmationView({ recipient, amount, recipientName, onB
               Valor
             </label>
             <p className="text-2xl font-bold text-green-600">
-              R$ {amount}
+              R$ {paymentData?.amount || '0'}
             </p>
           </div>
         </div>

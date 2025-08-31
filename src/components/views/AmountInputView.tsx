@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight, Leaf } from 'lucide-react';
 import AddressDisplay from '../AddressDisplay';
+import { useWalletStore } from '../../stores/useWalletStore';
 
-interface AmountInputViewProps {
-  pixKey: string;
-  onBack: () => void;
-  onNext: (amount: string) => void;
-}
-
-export default function AmountInputView({ pixKey, onBack, onNext }: AmountInputViewProps) {
+export default function AmountInputView() {
+  const { paymentData, setCurrentView, handleAmountSubmit } = useWalletStore();
   const [amount, setAmount] = useState('');
   const [kaleAmount, setKaleAmount] = useState('0.00');
 
@@ -47,11 +43,9 @@ export default function AmountInputView({ pixKey, onBack, onNext }: AmountInputV
   const handleNext = () => {
     const numericAmount = parseFloat(amount);
     if (numericAmount > 0) {
-      onNext(amount);
+      handleAmountSubmit(amount);
     }
   };
-
-  // Função formatRecipient substituída pelo componente AddressDisplay
 
   const isValidAmount = parseFloat(amount) > 0;
 
@@ -61,7 +55,7 @@ export default function AmountInputView({ pixKey, onBack, onNext }: AmountInputV
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <button
-            onClick={onBack}
+            onClick={() => setCurrentView('pix_key_input')}
             className="justify-center whitespace-nowrap rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 text-green-600 font-medium flex items-center p-0"
           >
             <ArrowLeft className="h-4 w-4 mr-1" />
@@ -80,7 +74,7 @@ export default function AmountInputView({ pixKey, onBack, onNext }: AmountInputV
           </label>
           <p className="text-lg font-semibold text-gray-800">
             <AddressDisplay 
-              address={pixKey} 
+              address={paymentData?.pixKey || ''} 
               showIcons={true}
             />
           </p>

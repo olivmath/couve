@@ -1,125 +1,44 @@
 import React from 'react';
-import HomeView from './components/views/HomeView';
-import { SendView } from './components/views/SendView';
-import { DepositView } from './components/views/DepositView';
-import { HistoryView } from './components/views/HistoryView';
-import { SuccessView } from './components/views/SuccessView';
+import SendView from './components/views/SendView';
+import DepositView from './components/views/DepositView';
+import HistoryView from './components/views/HistoryView';
+import SuccessView from './components/views/SuccessView';
 import ProfileView from './components/views/ProfileView';
 import QRScannerView from './components/views/QRScannerView';
 import PixKeyInputView from './components/views/PixKeyInputView';
 import AmountInputView from './components/views/AmountInputView';
 import ConfirmationView from './components/views/ConfirmationView';
-import BottomNavigation from './components/BottomNavigation';
-import { useWallet } from './hooks/useWallet';
+import { BottomNavigation } from './components/BottomNavigation';
+import { useWalletStore } from './stores/useWalletStore';
+import HomeView from './components/views/HomeView';
 
 function App() {
   const {
-    balance,
-    pixAmount,
-    pixKey,
     currentView,
-    isProcessing,
-    qrCodeData,
-    kaleToBRL,
-    transactions,
-    paymentData,
-    setPixAmount,
-    setPixKey,
-    handleSendPIX,
-    setCurrentView,
-    startQRScan,
-    startPixKeyInput,
-    handleQRScanSuccess,
-    handlePastePixKey,
-    handlePixKeySubmit,
-    handleAmountSubmit
-  } = useWallet();
+  } = useWalletStore();
 
   const renderCurrentView = () => {
     switch (currentView) {
       case 'home':
-        return (
-          <HomeView
-            balance={balance}
-            kaleToBRL={kaleToBRL}
-            transactions={transactions}
-            onSend={() => setCurrentView('send')}
-            onReceive={() => setCurrentView('deposit')}
-            onFarm={() => window.open('https://kalefarm.xyz', '_blank')}
-          />
-        );
+        return <HomeView />;
       case 'send':
-        return (
-          <SendView
-            balance={balance}
-            kaleToBRL={kaleToBRL}
-            onNavigate={setCurrentView}
-            startQRScan={startQRScan}
-            startPixKeyInput={startPixKeyInput}
-            handlePastePixKey={handlePastePixKey}
-          />
-        );
+        return <SendView />;
       case 'deposit':
-        return (
-          <DepositView
-            onNavigate={setCurrentView}
-          />
-        );
+        return <DepositView />;
       case 'history':
-        return (
-          <HistoryView
-            transactions={transactions}
-            kaleToBRL={kaleToBRL}
-            onNavigate={setCurrentView}
-          />
-        );
+        return <HistoryView />;
       case 'profile':
-        return (
-          <ProfileView
-            balance={balance}
-            kaleToBRL={kaleToBRL}
-          />
-        );
+        return <ProfileView />;
       case 'qr_scanner':
-        return (
-          <QRScannerView
-            onBack={() => setCurrentView('send')}
-            onScanSuccess={handleQRScanSuccess}
-          />
-        );
+        return <QRScannerView />;
       case 'pix_key_input':
-        return (
-          <PixKeyInputView
-            onBack={() => setCurrentView('send')}
-            onNext={handlePixKeySubmit}
-          />
-        );
+        return <PixKeyInputView />;
       case 'amount_input':
-         return (
-           <AmountInputView
-             pixKey={paymentData?.pixKey || ''}
-             onBack={() => setCurrentView('pix_key_input')}
-             onNext={handleAmountSubmit}
-           />
-         );
+         return <AmountInputView />;
       case 'confirmation':
-          return (
-            <ConfirmationView
-              recipient={paymentData?.pixKey || ''}
-              amount={paymentData?.amount || '0'}
-              recipientName={paymentData?.recipientName}
-              onBack={() => setCurrentView('send')}
-              onConfirm={handleSendPIX}
-            />
-          );
+          return <ConfirmationView />;
       case 'success':
-        return (
-          <SuccessView
-            pixAmount={pixAmount}
-            kaleToBRL={kaleToBRL}
-            onNavigate={setCurrentView}
-          />
-        );
+        return <SuccessView />;
       default:
         return null;
     }
@@ -133,10 +52,7 @@ function App() {
       
       {/* Show bottom navigation only on main views */}
       {['home', 'history', 'profile'].includes(currentView) && (
-        <BottomNavigation 
-          currentView={currentView}
-          onNavigate={setCurrentView}
-        />
+        <BottomNavigation />
       )}
       
       <div className="p-4 text-center text-xs text-gray-500 pb-20">
