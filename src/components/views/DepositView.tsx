@@ -1,4 +1,4 @@
-import { ArrowRight, Truck, Sprout, Leaf } from "lucide-react";
+import { ArrowRight, Truck } from "lucide-react";
 import { Button } from "../ui/button";
 import AddressQRCode from "../AddressQRCode";
 import AddressDisplay from "../AddressDisplay";

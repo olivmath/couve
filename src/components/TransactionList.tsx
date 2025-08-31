@@ -1,4 +1,4 @@
-import { Leaf, Sprout, Send } from 'lucide-react';
+import { Leaf } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 
 interface Transaction {
@@ -11,11 +11,10 @@ interface Transaction {
 
 interface TransactionListProps {
   transactions: Transaction[];
-  kaleToBRL: number;
   limit?: number;
 }
 
-export const TransactionList = ({ transactions, kaleToBRL, limit = 3 }: TransactionListProps) => {
+export const TransactionList = ({ transactions, limit = 3 }: TransactionListProps) => {
   const displayTransactions = transactions.slice(0, limit);
 
   return (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Camera, X } from 'lucide-react';
 import { useWalletStore } from '../../stores/useWalletStore';
 
@@ -6,7 +6,7 @@ export default function QRScannerView() {
   const { setCurrentView, handleQRScanSuccess } = useWalletStore();
   const [isScanning, setIsScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const [, setHasPermission] = useState<boolean | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 

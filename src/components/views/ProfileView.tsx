@@ -1,12 +1,21 @@
 import React from 'react';
+import { useUser } from '@stackframe/stack';
 import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { User, Settings, Shield, HelpCircle, LogOut, Leaf, Star } from 'lucide-react';
 import { useWalletStore } from '../../stores/useWalletStore';
 
 const ProfileView: React.FC = () => {
-  const { balance, kaleToBRL } = useWalletStore();
+  const user = useUser();
+  const { balance, kaleToBRL, navigateToView } = useWalletStore();
   const brlBalance = balance * kaleToBRL;
+
+  const handleLogout = async () => {
+    if (user) {
+      await user.signOut();
+      navigateToView('signin');
+    }
+  };
   
   const menuItems = [
     {
@@ -41,10 +50,18 @@ const ProfileView: React.FC = () => {
       <Card className="bg-gradient-to-br from-green-600 to-green-700 text-white border-0">
         <CardContent className="p-6 text-center">
           <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <User className="h-10 w-10 text-white" />
+            {user?.profileImageUrl ? (
+              <img 
+                src={user.profileImageUrl} 
+                alt="Profile" 
+                className="w-full h-full rounded-full object-cover"
+              />
+            ) : (
+              <User className="h-10 w-10 text-white" />
+            )}
           </div>
-          <h2 className="text-xl font-bold mb-1">KALE Farmer</h2>
-          <p className="text-green-100 text-sm mb-4">Stellar Network Member</p>
+          <h2 className="text-xl font-bold mb-1">{user?.displayName || 'KALE Farmer'}</h2>
+          <p className="text-green-100 text-sm mb-4">{user?.primaryEmail || 'Stellar Network Member'}</p>
           
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
             <div className="flex justify-between items-center mb-2">
@@ -100,6 +117,21 @@ const ProfileView: React.FC = () => {
           );
         })}
       </div>
+
+      {/* Logout Button */}
+      <Card className="border-2 border-red-200 hover:bg-red-50 transition-colors cursor-pointer">
+        <CardContent className="p-4" onClick={handleLogout}>
+          <div className="flex items-center space-x-4">
+            <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+              <LogOut className="h-5 w-5 text-red-600" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-gray-800">Logout</h3>
+              <p className="text-sm text-gray-600">Sign out of your account</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Meridian 2025 Banner */}
       <Card className="bg-gradient-to-r from-purple-600 to-blue-600 text-white border-0">

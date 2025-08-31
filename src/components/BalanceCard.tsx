@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent } from './ui/card';
-import { CreditCard, Leaf } from 'lucide-react';
+import { Leaf } from 'lucide-react';
 
 interface BalanceCardProps {
   balance: number;

@@ -1,4 +1,3 @@
-import React from "react";
 import { ArrowLeft, QrCode, Clipboard, Keyboard, Leaf } from "lucide-react";
 import { useWalletStore } from "../../stores/useWalletStore";
 

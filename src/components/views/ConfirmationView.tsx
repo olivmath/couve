@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ArrowLeft, Send, Eye, EyeOff } from 'lucide-react';
 import AddressDisplay from '../AddressDisplay';
 import { useWalletStore } from '../../stores/useWalletStore';

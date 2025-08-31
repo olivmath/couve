@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight, Leaf } from 'lucide-react';
-import AddressDisplay from '../AddressDisplay';
 import { useWalletStore } from '../../stores/useWalletStore';
 
 export default function AmountInputView() {

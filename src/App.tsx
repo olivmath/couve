@@ -1,4 +1,5 @@
 import React from 'react';
+import { useUser } from '@stackframe/stack';
 import SendView from './components/views/SendView';
 import DepositView from './components/views/DepositView';
 import HistoryView from './components/views/HistoryView';
@@ -8,37 +9,61 @@ import QRScannerView from './components/views/QRScannerView';
 import PixKeyInputView from './components/views/PixKeyInputView';
 import AmountInputView from './components/views/AmountInputView';
 import ConfirmationView from './components/views/ConfirmationView';
+import AuthView from './components/views/AuthView';
+import ProtectedRoute from './components/ProtectedRoute';
 import { BottomNavigation } from './components/BottomNavigation';
 import { useWalletStore } from './stores/useWalletStore';
 import HomeView from './components/views/HomeView';
 
 function App() {
+  const user = useUser();
   const {
     currentView,
+    navigateToView,
   } = useWalletStore();
+
+  // Debug: Log do estado de autenticação
+  React.useEffect(() => {
+    console.log('Auth Debug:', { user: !!user, currentView, userEmail: user?.primaryEmail });
+  }, [user, currentView]);
+
+  // Gerencia redirecionamento baseado no estado de autenticação
+  React.useEffect(() => {
+    if (!user && currentView !== 'signin' && currentView !== 'signup') {
+      console.log('Redirecting to signin - user not authenticated');
+      navigateToView('signin');
+    } else if (user && (currentView === 'signin' || currentView === 'signup')) {
+      console.log('Redirecting to home - user authenticated');
+      navigateToView('home');
+    }
+  }, [user, currentView, navigateToView]);
 
   const renderCurrentView = () => {
     switch (currentView) {
       case 'home':
-        return <HomeView />;
+        return <ProtectedRoute><HomeView /></ProtectedRoute>;
       case 'send':
-        return <SendView />;
+        return <ProtectedRoute><SendView /></ProtectedRoute>;
       case 'deposit':
-        return <DepositView />;
+        return <ProtectedRoute><DepositView /></ProtectedRoute>;
       case 'history':
-        return <HistoryView />;
+        return <ProtectedRoute><HistoryView /></ProtectedRoute>;
       case 'profile':
-        return <ProfileView />;
+        return <ProtectedRoute><ProfileView /></ProtectedRoute>;
       case 'qr_scanner':
-        return <QRScannerView />;
+        return <ProtectedRoute><QRScannerView /></ProtectedRoute>;
       case 'pix_key_input':
-        return <PixKeyInputView />;
+        return <ProtectedRoute><PixKeyInputView /></ProtectedRoute>;
       case 'amount_input':
-         return <AmountInputView />;
+         return <ProtectedRoute><AmountInputView /></ProtectedRoute>;
       case 'confirmation':
-          return <ConfirmationView />;
+          return <ProtectedRoute><ConfirmationView /></ProtectedRoute>;
       case 'success':
-        return <SuccessView />;
+        return <ProtectedRoute><SuccessView /></ProtectedRoute>;
+      case 'signin':
+        return <AuthView mode="signin" />;
+      case 'signup':
+        return <AuthView mode="signup" />;
       default:
         return null;
     }
@@ -50,8 +75,8 @@ function App() {
         {renderCurrentView()}
       </div>
       
-      {/* Show bottom navigation only on main views */}
-      {['home', 'history', 'profile'].includes(currentView) && (
+      {/* Show bottom navigation only on main views and when authenticated */}
+      {user && ['home', 'history', 'profile'].includes(currentView) && (
         <BottomNavigation />
       )}
       

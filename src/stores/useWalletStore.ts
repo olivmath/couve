@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { parsePixPayload, isValidPixPayload, formatRecipientName, PixKeyType, detectPixKeyType } from '../lib/pixParser';
-export type ViewType = 'home' | 'send' | 'deposit' | 'history' | 'success' | 'profile' | 'qr_scanner' | 'pix_key_input' | 'amount_input' | 'confirmation';
+export type ViewType = 'home' | 'send' | 'deposit' | 'history' | 'success' | 'profile' | 'qr_scanner' | 'pix_key_input' | 'amount_input' | 'confirmation' | 'signin' | 'signup';
 
 export interface Transaction {
   id: string;
@@ -59,7 +59,7 @@ export const useWalletStore = create<WalletState>((set, get) => ({
   pixAmount: '',
   pixKey: '',
   pixKeyType: 'UUID',
-  currentView: 'home',
+  currentView: 'signin',
   isProcessing: false,
   qrCodeData: '',
   kaleToBRL: 0.42,
