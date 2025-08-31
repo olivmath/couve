@@ -6,8 +6,11 @@ import { useWalletStore } from "@/stores/useWalletStore";
 import { useStellarAccount } from "../../lib/useStellarAccount";
 
 const HomeView: React.FC = () => {
-  const { kaleToBRL, kaleToUSD, setStellarBalance, setStellarAccount, updateKalePrice } = useWalletStore();
+  const { kaleToBRL, setStellarBalance, setStellarAccount, updateKalePrice } = useWalletStore();
   const { stellarAccount, balance, refreshBalance } = useStellarAccount();
+  
+  // Por enquanto, assumir que o balance já representa KALE
+  const kaleBalance = balance;
 
   // Sincronizar o saldo Stellar com o wallet store
   useEffect(() => {
@@ -36,7 +39,7 @@ const HomeView: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-20">
-      <BalanceCard balance={balance} kaleToBRL={kaleToBRL} kaleToUSD={kaleToUSD} />
+      <BalanceCard kaleBalance={kaleBalance} kaleToBRL={kaleToBRL} />
       <QuickActions />
       <MeridianEventsCarousel />
     </div>

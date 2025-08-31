@@ -31,7 +31,6 @@ interface WalletState {
   isProcessing: boolean;
   qrCodeData: string;
   kaleToBRL: number;
-  kaleToUSD: number;
   transactions: Transaction[];
   paymentData: PaymentData | null;
   
@@ -58,7 +57,6 @@ interface WalletState {
   setQrCodeData: (data: string) => void;
   setCurrentView: (view: ViewType) => void;
   setPaymentData: (data: PaymentData | null) => void;
-  setKaleToUSD: (price: number) => void;
   updateKalePrice: () => Promise<void>;
 }
 
@@ -74,7 +72,6 @@ export const useWalletStore = create<WalletState>((set, get) => ({
   isProcessing: false,
   qrCodeData: '',
   kaleToBRL: 0.42,
-  kaleToUSD: 0.000385,
   paymentData: null,
   transactions: [
     { id: '1', type: 'pix_sent', amount: -21.00, date: '2025-08-28', description: 'Mercado Orgânico Verde' },
@@ -93,13 +90,13 @@ export const useWalletStore = create<WalletState>((set, get) => ({
   setQrCodeData: (qrCodeData) => set({ qrCodeData }),
   setCurrentView: (currentView) => set({ currentView }),
   setPaymentData: (paymentData) => set({ paymentData }),
-  setKaleToUSD: (kaleToUSD) => set({ kaleToUSD }),
+
   
-  // Atualizar preço do KALE
+  // Atualizar preço do KALE em BRL
   updateKalePrice: async () => {
     try {
-      const price = await PriceService.getKalePrice();
-      set({ kaleToUSD: price });
+      const priceBRL = await PriceService.getKalePrice();
+      set({ kaleToBRL: priceBRL });
     } catch (error) {
       console.error('Erro ao atualizar preço do KALE:', error);
     }

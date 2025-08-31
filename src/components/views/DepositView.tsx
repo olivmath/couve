@@ -3,9 +3,11 @@ import { Button } from "../ui/button";
 import AddressQRCode from "../AddressQRCode";
 import AddressDisplay from "../AddressDisplay";
 import { useWalletStore } from "../../stores/useWalletStore";
+import { useStellarAccount } from "../../lib/useStellarAccount";
 
 export const DepositView = () => {
   const { setCurrentView } = useWalletStore();
+  const { stellarAccount } = useStellarAccount();
 
   return (
     <div className="space-y-6">
@@ -25,11 +27,13 @@ export const DepositView = () => {
         <div></div>
       </div>
 
-      <AddressQRCode 
-        address="GCKFBEIYTKP74Q7T7IVLSTLC6JGDTZXXHZGLXXUAMXWL4VYZJSJK2024"
-        title="KALE Farm Address"
-        explorerUrl="https://stellar.expert/explorer/public/account/GCKFBEIYTKP74Q7T7IVLSTLC6JGDTZXXHZGLXXUAMXWL4VYZJSJK2024"
-      />
+      {stellarAccount && (
+        <AddressQRCode 
+          address={stellarAccount.publicKey}
+          title="Your KALE Wallet Address"
+          explorerUrl={`https://stellar.expert/explorer/public/account/${stellarAccount.publicKey}`}
+        />
+      )}
       <div className="text-sm text-gray-600 space-y-1 bg-white p-4 rounded-lg border border-green-200">
         <p>
           <strong>Asset:</strong> KALE 🥬
@@ -42,7 +46,7 @@ export const DepositView = () => {
           />
         </p>
         <p>
-          <strong>Memo:</strong> FARMER123456
+          <strong>Network:</strong> Stellar Public Network
         </p>
       </div>
     </div>

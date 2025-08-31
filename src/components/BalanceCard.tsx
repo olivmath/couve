@@ -4,14 +4,15 @@ import { Leaf } from 'lucide-react';
 import { iconColors, textColors } from '../lib/styles';
 
 interface BalanceCardProps {
-  balance: number;
+  kaleBalance: number;
   kaleToBRL: number;
   kaleToUSD?: number;
 }
 
-const BalanceCard: React.FC<BalanceCardProps> = ({ balance, kaleToBRL, kaleToUSD = 0.000385 }) => {
-  const brlBalance = balance * kaleToBRL;
-  const usdBalance = balance * kaleToUSD;
+const BalanceCard: React.FC<BalanceCardProps> = ({ kaleBalance, kaleToBRL, kaleToUSD = 0.000385 }) => {
+  const brlBalance = kaleBalance * kaleToBRL;
+  const kaleToBRLPrice = kaleToBRL;
+  const usdBalance = kaleBalance * kaleToUSD;
   
   return (
     <Card className="bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 text-white relative overflow-hidden border-0 aspect-[1.6/1]">
@@ -45,15 +46,12 @@ const BalanceCard: React.FC<BalanceCardProps> = ({ balance, kaleToBRL, kaleToUSD
         <div className="flex justify-between items-end">
           <div>
             <p className="text-slate-400 text-xs mb-1">KALE Balance</p>
-            <p className={`text-lg font-semibold ${iconColors.lighter}`}>{balance.toFixed(2)} $KALE</p>
+            <p className={`text-lg font-semibold ${iconColors.lighter}`}>{kaleBalance.toFixed(2)} $KALE</p>
           </div>
           <div className="text-right">
             <p className="text-slate-400 text-xs mb-1">KALE Price</p>
             <p className="text-sm font-medium text-slate-300">
-              ${kaleToUSD < 0.001 ? kaleToUSD.toFixed(6) : kaleToUSD.toFixed(4)} USD
-            </p>
-            <p className="text-xs text-slate-400">
-              ≈ ${usdBalance.toFixed(2)} USD
+              R$ {kaleToBRLPrice.toFixed(4)} BRL
             </p>
           </div>
         </div>
