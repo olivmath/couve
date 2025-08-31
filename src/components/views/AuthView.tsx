@@ -10,14 +10,21 @@ const AuthView: React.FC<AuthViewProps> = ({ mode = 'signin' }) => {
   const user = useUser();
   const { navigateToView } = useWalletStore();
 
+  // Redirect to home when user is authenticated
+  React.useEffect(() => {
+    if (user) {
+      navigateToView('home');
+    }
+  }, [user, navigateToView]);
+
   if (user) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-4">
         <div className="text-center mb-6">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
           <h2 className="text-2xl font-bold text-green-800 mb-2">Welcome!</h2>
-          <p className="text-gray-600">You are already logged in.</p>
+          <p className="text-gray-600">Redirecting to your wallet...</p>
         </div>
-        <UserButton />
       </div>
     );
   }
@@ -48,8 +55,8 @@ const AuthView: React.FC<AuthViewProps> = ({ mode = 'signin' }) => {
             <p className="text-gray-600">
               Don't have an account?{' '}
               <button
-                onClick={() => navigateToView('signup' as any)}
-                className="text-green-600 hover:text-green-800 font-medium"
+                onClick={() => navigateToView('signup')}
+                className="text-green-600 hover:text-green-800 font-medium underline"
               >
                 Sign up
               </button>
@@ -58,8 +65,8 @@ const AuthView: React.FC<AuthViewProps> = ({ mode = 'signin' }) => {
             <p className="text-gray-600">
               Already have an account?{' '}
               <button
-                onClick={() => navigateToView('signin' as any)}
-                className="text-green-600 hover:text-green-800 font-medium"
+                onClick={() => navigateToView('signin')}
+                className="text-green-600 hover:text-green-800 font-medium underline"
               >
                 Sign in
               </button>

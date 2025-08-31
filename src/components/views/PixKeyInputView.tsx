@@ -88,7 +88,7 @@ export default function PixKeyInputView() {
             <li>• CPF: 123.456.789-00</li>
             <li>• Email: user@email.com</li>
             <li>• Phone: 11987654321</li>
-            <li>• Random key: 12345678-1234-1234-1234-123456789012</li>
+            <li>• Random key: 12345-...-456789012</li>
           </ul>
         </div>
 

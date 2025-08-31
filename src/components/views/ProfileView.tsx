@@ -75,7 +75,7 @@ const ProfileView: React.FC = () => {
           const Icon = item.icon;
           return (
             <Card key={index} className="border-2 border-green-200 hover:bg-green-50 transition-colors cursor-pointer">
-              <CardContent className="p-4" onClick={item.action}>
+              <CardContent className="p-3" onClick={item.action}>
                 <div className="flex items-center space-x-4">
                   <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
                     <Icon className="h-5 w-5 text-green-600" />
@@ -96,14 +96,19 @@ const ProfileView: React.FC = () => {
 
 
       {/* Logout */}
-      <Button 
-        variant="outline" 
-        className="w-full border-2 border-red-200 text-red-600 hover:bg-red-50"
-        onClick={() => console.log('Logout clicked')}
-      >
-        <LogOut className="h-4 w-4 mr-2" />
-        Sign Out
-      </Button>
+      <Card className="border-2 border-red-200 hover:bg-red-50 transition-colors cursor-pointer">
+        <CardContent className="p-3" onClick={handleLogout}>
+          <div className="flex items-center space-x-4">
+            <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+              <LogOut className="h-5 w-5 text-red-600" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-red-600">Sign Out</h3>
+              <p className="text-sm text-red-500">Logout from your account</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
