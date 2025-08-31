@@ -37,7 +37,7 @@ const AddressDisplay: React.FC<AddressDisplayProps> = ({
       <div className="flex items-center">
         {label && <span className="text-gray-600 mr-2">{label}:</span>}
         <a 
-          href={explorerUrl ? explorerUrl : `https://stellar.expert/explorer/public/account/${address}`} 
+          href={explorerUrl ? explorerUrl : `https://stellar.expert/explorer/testnet/account/${address}`} 
           target="_blank" 
           rel="noopener noreferrer"
           className="font-mono text-green-700 hover:text-green-800 hover:underline"

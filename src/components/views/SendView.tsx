@@ -30,16 +30,7 @@ export function SendView() {
           <div></div>
         </div>
 
-        {/* Balance Info */}
-        <div className="bg-green-50 rounded-lg p-4">
-          <p className="text-sm text-gray-600 mb-1">Available balance</p>
-          <p className="text-2xl font-bold text-green-600">
-            {balance.toFixed(2)} KALE
-          </p>
-          <p className="text-sm text-gray-500">
-            ≈ R$ {(balance * kaleToBRL).toFixed(2)}
-          </p>
-        </div>
+
 
         {/* PIX Options */}
         <div>

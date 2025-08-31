@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import { parsePixPayload, isValidPixPayload, formatRecipientName, PixKeyType, detectPixKeyType } from '../lib/pixParser';
+import { StellarAccount } from '../lib/stellarService';
+import PriceService from '../lib/priceService';
 export type ViewType = 'home' | 'send' | 'deposit' | 'history' | 'success' | 'profile' | 'qr_scanner' | 'pix_key_input' | 'amount_input' | 'confirmation' | 'signin' | 'signup';
 
 export interface Transaction {
@@ -20,6 +22,8 @@ interface PaymentData {
 interface WalletState {
   // Estado
   balance: number;
+  stellarBalance: number;
+  stellarAccount: StellarAccount | null;
   pixAmount: string;
   pixKey: string;
   pixKeyType: PixKeyType;
@@ -27,6 +31,7 @@ interface WalletState {
   isProcessing: boolean;
   qrCodeData: string;
   kaleToBRL: number;
+  kaleToUSD: number;
   transactions: Transaction[];
   paymentData: PaymentData | null;
   
@@ -47,15 +52,21 @@ interface WalletState {
   
   // Setters
   setBalance: (balance: number) => void;
+  setStellarBalance: (balance: number) => void;
+  setStellarAccount: (account: StellarAccount | null) => void;
   setIsProcessing: (isProcessing: boolean) => void;
   setQrCodeData: (data: string) => void;
   setCurrentView: (view: ViewType) => void;
   setPaymentData: (data: PaymentData | null) => void;
+  setKaleToUSD: (price: number) => void;
+  updateKalePrice: () => Promise<void>;
 }
 
 export const useWalletStore = create<WalletState>((set, get) => ({
   // Estado inicial
-  balance: 1247.89,
+  balance: 0,
+  stellarBalance: 0,
+  stellarAccount: null,
   pixAmount: '',
   pixKey: '',
   pixKeyType: 'UUID',
@@ -63,6 +74,7 @@ export const useWalletStore = create<WalletState>((set, get) => ({
   isProcessing: false,
   qrCodeData: '',
   kaleToBRL: 0.42,
+  kaleToUSD: 0.000385,
   paymentData: null,
   transactions: [
     { id: '1', type: 'pix_sent', amount: -21.00, date: '2025-08-28', description: 'Mercado Orgânico Verde' },
@@ -73,12 +85,25 @@ export const useWalletStore = create<WalletState>((set, get) => ({
   
   // Setters
   setBalance: (balance) => set({ balance }),
+  setStellarBalance: (stellarBalance) => set({ stellarBalance }),
+  setStellarAccount: (stellarAccount) => set({ stellarAccount }),
   setPixAmount: (pixAmount) => set({ pixAmount }),
   setPixKey: (pixKey) => set({ pixKey }),
   setIsProcessing: (isProcessing) => set({ isProcessing }),
   setQrCodeData: (qrCodeData) => set({ qrCodeData }),
   setCurrentView: (currentView) => set({ currentView }),
   setPaymentData: (paymentData) => set({ paymentData }),
+  setKaleToUSD: (kaleToUSD) => set({ kaleToUSD }),
+  
+  // Atualizar preço do KALE
+  updateKalePrice: async () => {
+    try {
+      const price = await PriceService.getKalePrice();
+      set({ kaleToUSD: price });
+    } catch (error) {
+      console.error('Erro ao atualizar preço do KALE:', error);
+    }
+  },
   
   // Ações
   handleSendPIX: () => {
