@@ -7,7 +7,7 @@ export default function AmountInputView() {
   const [amount, setAmount] = useState('');
   const [kaleAmount, setKaleAmount] = useState('0.00');
 
-  // Simular conversão BRL para KALE (taxa fictícia: 1 BRL = 2.381 KALE)
+  // Simulate BRL to KALE conversion (fictional rate: 1 BRL = 2.381 KALE)
   const brlToKaleRate = 23.81;
 
   useEffect(() => {
@@ -61,7 +61,7 @@ export default function AmountInputView() {
             Back
           </button>
           <h2 className="text-xl font-bold text-gray-800">
-            Valor do Pagamento
+            Payment Amount
           </h2>
           <div></div>
         </div>
@@ -70,7 +70,7 @@ export default function AmountInputView() {
         {/* Amount Input */}
         <div className="space-y-4">
           <label className="block text-sm font-medium text-gray-700">
-            Valor em BRL
+            Amount in BRL
           </label>
           <div className="relative">
             <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-2xl font-semibold text-gray-500">
@@ -80,7 +80,7 @@ export default function AmountInputView() {
               type="text"
               value={amount}
               onChange={handleAmountChange}
-              placeholder="0,00"
+              placeholder="0.00"
               className="w-full pl-12 pr-4 py-4 text-2xl font-semibold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
               autoFocus
             />
@@ -113,7 +113,7 @@ export default function AmountInputView() {
           disabled={!isValidAmount}
           className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-4 px-4 rounded-lg font-semibold disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed hover:from-green-700 hover:to-green-800 transition-all text-lg flex items-center justify-center"
         >
-          Próximo
+          Next
           <ArrowRight className="h-5 w-5 ml-2" />
         </button>
       </div>

@@ -7,8 +7,8 @@ interface FarmingStatusProps {
 }
 
 export const FarmingStatus = ({ 
-  status = "Plantando...", 
-  nextHarvest = "próxima colheita em 2h" 
+  status = "Planting...", 
+  nextHarvest = "next harvest in 2h" 
 }: FarmingStatusProps) => {
   return (
     <Card className="bg-gradient-to-r from-yellow-400 to-orange-400 rounded-xl p-4 text-white border-0">

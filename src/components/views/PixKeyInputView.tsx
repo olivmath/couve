@@ -33,7 +33,7 @@ export default function PixKeyInputView() {
   };
 
   const getPlaceholder = () => {
-    return 'CPF, CNPJ, e-mail, telefone ou chave aleatória';
+    return 'CPF, CNPJ, email, phone or random key';
   };
 
   return (
@@ -49,7 +49,7 @@ export default function PixKeyInputView() {
             Back
           </button>
           <h2 className="text-xl font-bold text-gray-800">
-            Chave PIX
+            PIX Key
           </h2>
           <div></div>
         </div>
@@ -57,7 +57,7 @@ export default function PixKeyInputView() {
         {/* PIX Key Input */}
         <div className="space-y-4">
           <label className="block text-sm font-medium text-gray-700">
-            Digite a chave PIX do destinatário
+            Enter recipient's PIX key
           </label>
           <input
             type="text"
@@ -70,25 +70,25 @@ export default function PixKeyInputView() {
           
           {pixKey && !isValid && (
             <p className="text-sm text-red-600">
-              Chave PIX inválida. Verifique o formato.
+              Invalid PIX key. Check the format.
             </p>
           )}
           
           {isValid && pixKeyType && (
             <p className="text-sm text-green-600 flex items-center">
-              ✓ Chave PIX válida - Tipo: {pixKeyType}
+              ✓ Valid PIX key - Type: {pixKeyType}
             </p>
           )}
         </div>
 
         {/* Examples */}
         <div className="bg-gray-50 rounded-lg p-4">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Exemplos de chaves PIX:</h3>
+          <h3 className="text-sm font-medium text-gray-700 mb-2">PIX key examples:</h3>
           <ul className="text-sm text-gray-600 space-y-1">
             <li>• CPF: 123.456.789-00</li>
-            <li>• E-mail: usuario@email.com</li>
-            <li>• Telefone: 11987654321</li>
-            <li>• Chave aleatória: 12345678-1234-1234-1234-123456789012</li>
+            <li>• Email: user@email.com</li>
+            <li>• Phone: 11987654321</li>
+            <li>• Random key: 12345678-1234-1234-1234-123456789012</li>
           </ul>
         </div>
 
@@ -98,7 +98,7 @@ export default function PixKeyInputView() {
           disabled={!isValid}
           className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-4 px-4 rounded-lg font-semibold disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed hover:from-green-700 hover:to-green-800 transition-all text-lg flex items-center justify-center"
         >
-          Próximo
+          Next
           <ArrowRight className="h-5 w-5 ml-2" />
         </button>
       </div>

@@ -60,41 +60,14 @@ const ProfileView: React.FC = () => {
               <User className="h-10 w-10 text-white" />
             )}
           </div>
-          <h2 className="text-xl font-bold mb-1">{user?.displayName || 'KALE Farmer'}</h2>
+          <h2 className="text-xl font-bold mb-1">{user?.displayName || 'Couve Farmer'}</h2>
           <p className="text-green-100 text-sm mb-4">{user?.primaryEmail || 'Stellar Network Member'}</p>
           
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-green-100 text-sm">Total Balance</span>
-              <Leaf className="h-4 w-4 text-green-200" />
-            </div>
-            <p className="text-2xl font-bold">R$ {brlBalance.toFixed(2)}</p>
-            <p className="text-green-200 text-sm">{balance.toFixed(2)} $KALE</p>
-          </div>
+
         </CardContent>
       </Card>
 
-      {/* Farmer Stats */}
-      <div className="grid grid-cols-3 gap-4">
-        <Card className="border-2 border-green-200">
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-green-600 mb-1">127</div>
-            <div className="text-xs text-gray-600">Days Farming</div>
-          </CardContent>
-        </Card>
-        <Card className="border-2 border-green-200">
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-green-600 mb-1">42</div>
-            <div className="text-xs text-gray-600">Harvests</div>
-          </CardContent>
-        </Card>
-        <Card className="border-2 border-green-200">
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-green-600 mb-1">8.9k</div>
-            <div className="text-xs text-gray-600">KALE Earned</div>
-          </CardContent>
-        </Card>
-      </div>
+
 
       {/* Menu Items */}
       <div className="space-y-3">
@@ -118,36 +91,9 @@ const ProfileView: React.FC = () => {
         })}
       </div>
 
-      {/* Logout Button */}
-      <Card className="border-2 border-red-200 hover:bg-red-50 transition-colors cursor-pointer">
-        <CardContent className="p-4" onClick={handleLogout}>
-          <div className="flex items-center space-x-4">
-            <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-              <LogOut className="h-5 w-5 text-red-600" />
-            </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-gray-800">Logout</h3>
-              <p className="text-sm text-gray-600">Sign out of your account</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Meridian 2025 Banner */}
-      <Card className="bg-gradient-to-r from-purple-600 to-blue-600 text-white border-0">
-        <CardContent className="p-4">
-          <h3 className="font-bold mb-2">🌟 Meridian 2025</h3>
-          <p className="text-sm text-purple-100 mb-3">
-            Join us in Rio de Janeiro for the biggest Stellar event of the year!
-          </p>
-          <Button 
-            className="bg-white text-purple-600 hover:bg-purple-50 text-sm"
-            onClick={() => window.open('https://meridian.stellar.org', '_blank')}
-          >
-            Learn More
-          </Button>
-        </CardContent>
-      </Card>
+
+
 
       {/* Logout */}
       <Button 

@@ -48,9 +48,9 @@ export const HistoryView = () => {
             </div>
             <div className="flex justify-between text-sm">
               <p className="text-gray-500">
-                {tx.type === 'pix_sent' ? '💳 PIX sent' : 
-                 tx.type === 'harvest' ? '🌱 KALE Harvest' : 'Transaction'}
-              </p>
+                  {tx.type === 'pix_sent' ? '💳 PIX sent' : 
+                  tx.type === 'harvest' ? '🌱 KALE Harvest' : 'Transaction'}
+                </p>
               {tx.type === 'pix_sent' && (
                 <p className="text-gray-400">
                   ~{(Math.abs(tx.amount) / kaleToBRL).toFixed(0)} KALE used

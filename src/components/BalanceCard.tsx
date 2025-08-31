@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent } from './ui/card';
 import { Leaf } from 'lucide-react';
+import { iconColors, textColors } from '../lib/styles';
 
 interface BalanceCardProps {
   balance: number;
@@ -24,7 +25,11 @@ const BalanceCard: React.FC<BalanceCardProps> = ({ balance, kaleToBRL }) => {
       </div>
       {/* Card brand logo */}
       <div className="absolute top-4 right-6">
-        <Leaf className="h-8 w-8 text-green-400" />
+        <img 
+          src="/stellar-xlm-logo.svg" 
+          alt="Stellar Logo" 
+          className="h-8 w-8 opacity-80"
+        />
       </div>
       
       <CardContent className="p-6 h-full flex flex-col justify-between">
@@ -38,7 +43,7 @@ const BalanceCard: React.FC<BalanceCardProps> = ({ balance, kaleToBRL }) => {
         <div className="flex justify-between items-end">
           <div>
             <p className="text-slate-400 text-xs mb-1">KALE Balance</p>
-            <p className="text-lg font-semibold text-green-400">{balance.toFixed(2)} $KALE</p>
+        <p className={`text-lg font-semibold ${iconColors.lighter}`}>{balance.toFixed(2)} $KALE</p>
           </div>
         </div>
       </CardContent>

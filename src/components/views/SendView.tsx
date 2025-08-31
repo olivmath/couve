@@ -25,14 +25,14 @@ export function SendView() {
           </button>
           <h2 className="text-xl font-bold text-gray-800 flex items-center">
             <Leaf className="h-6 w-6 text-green-600 mr-2" />
-            Pay with KALE
+            Pay with Couve
           </h2>
           <div></div>
         </div>
 
         {/* Balance Info */}
         <div className="bg-green-50 rounded-lg p-4">
-          <p className="text-sm text-gray-600 mb-1">Saldo disponível</p>
+          <p className="text-sm text-gray-600 mb-1">Available balance</p>
           <p className="text-2xl font-bold text-green-600">
             {balance.toFixed(2)} KALE
           </p>
@@ -44,7 +44,7 @@ export function SendView() {
         {/* PIX Options */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-3">
-            Como você quer pagar?
+            How do you want to pay?
           </label>
           <div className="grid grid-cols-3 gap-2">
             <button
@@ -76,18 +76,17 @@ export function SendView() {
         {/* Instructions */}
         <div className="bg-gray-50 rounded-lg p-4">
           <h3 className="text-sm font-medium text-gray-700 mb-2">
-            Como funciona:
+            How it works:
           </h3>
           <ul className="text-sm text-gray-600 space-y-1">
             <li>
-              • <strong>Scan QR:</strong> Escaneie um QR Code PIX
+              • <strong>Scan QR:</strong> Scan a PIX QR Code
             </li>
             <li>
-              • <strong>Paste:</strong> Cole uma chave PIX da área de
-              transferência
+              • <strong>Paste:</strong> Paste a PIX key from clipboard
             </li>
             <li>
-              • <strong>Type:</strong> Digite manualmente a chave PIX
+              • <strong>Type:</strong> Manually type the PIX key
             </li>
           </ul>
         </div>

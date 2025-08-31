@@ -16,7 +16,7 @@ export default function ConfirmationView() {
 
   const handlePasswordSubmit = async () => {
     if (password.length < 4) {
-      alert('Senha deve ter pelo menos 4 dígitos');
+      alert('Password must have at least 4 digits');
       return;
     }
 
@@ -42,7 +42,7 @@ export default function ConfirmationView() {
             Back
           </button>
           <h2 className="text-xl font-bold text-gray-800 flex items-center">
-            Confirmar Pagamento
+            Confirm Payment
           </h2>
           <div></div>
         </div>
@@ -51,15 +51,15 @@ export default function ConfirmationView() {
         <div className="bg-gray-50 rounded-lg p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">
-              Destinatário {paymentData?.recipientName}
+              Recipient {paymentData?.recipientName}
             </label>
             <div className="flex items-center gap-2 mb-1">
                <span className="text-xs bg-gray-200 px-2 py-1 rounded-full">
                  {paymentData?.pixKeyType === 'CPF' ? 'CPF' :
                   paymentData?.pixKeyType === 'CNPJ' ? 'CNPJ' :
-                  paymentData?.pixKeyType === 'EMAIL' ? 'E-mail' :
-                  paymentData?.pixKeyType === 'PHONE' ? 'Telefone' :
-                  paymentData?.pixKeyType === 'UUID' ? 'Chave Aleatória' : 'Desconhecido'}
+                  paymentData?.pixKeyType === 'EMAIL' ? 'Email' :
+                  paymentData?.pixKeyType === 'PHONE' ? 'Phone' :
+                  paymentData?.pixKeyType === 'UUID' ? 'Random Key' : 'Unknown'}
                </span>
              </div>
             <p className="text-lg font-semibold text-gray-800">
@@ -77,7 +77,7 @@ export default function ConfirmationView() {
           
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">
-              Valor
+              Amount
             </label>
             <p className="text-2xl font-bold text-green-600">
               R$ {paymentData?.amount || '0'}
@@ -89,7 +89,7 @@ export default function ConfirmationView() {
         {showPasswordInput && (
           <div className="space-y-4">
             <label className="block text-sm font-medium text-gray-700">
-              Digite sua senha
+              Enter your password
             </label>
             <div className="relative">
               <input
@@ -120,7 +120,7 @@ export default function ConfirmationView() {
               className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-4 px-4 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all text-lg flex items-center justify-center"
             >
               <Send className="h-5 w-5 mr-2" />
-              Confirmar Pagamento
+              Confirm Payment
             </button>
           ) : (
             <button
@@ -131,12 +131,12 @@ export default function ConfirmationView() {
               {isProcessing ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Processando...
+                  Processing...
                 </>
               ) : (
                 <>
                   <Send className="h-5 w-5 mr-2" />
-                  Enviar Pagamento
+                  Send Payment
                 </>
               )}
             </button>

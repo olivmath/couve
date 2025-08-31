@@ -14,8 +14,8 @@ const AuthView: React.FC<AuthViewProps> = ({ mode = 'signin' }) => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-4">
         <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-green-800 mb-2">Bem-vindo!</h2>
-          <p className="text-gray-600">Você já está logado.</p>
+          <h2 className="text-2xl font-bold text-green-800 mb-2">Welcome!</h2>
+          <p className="text-gray-600">You are already logged in.</p>
         </div>
         <UserButton />
       </div>
@@ -27,9 +27,9 @@ const AuthView: React.FC<AuthViewProps> = ({ mode = 'signin' }) => {
       <div className="w-full max-w-md">
         {/* Logo/Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-green-800 mb-2">Kale Wallet</h1>
+          <h1 className="text-3xl font-bold text-green-800 mb-2">Couve 🥬</h1>
           <p className="text-gray-600">
-            {mode === 'signin' ? 'Entre na sua conta' : 'Crie sua conta'}
+            {mode === 'signin' ? 'Sign in to your account' : 'Create your account'}
           </p>
         </div>
 
@@ -46,22 +46,22 @@ const AuthView: React.FC<AuthViewProps> = ({ mode = 'signin' }) => {
         <div className="text-center mt-6">
           {mode === 'signin' ? (
             <p className="text-gray-600">
-              Não tem uma conta?{' '}
+              Don't have an account?{' '}
               <button
                 onClick={() => navigateToView('signup' as any)}
                 className="text-green-600 hover:text-green-800 font-medium"
               >
-                Cadastre-se
+                Sign up
               </button>
             </p>
           ) : (
             <p className="text-gray-600">
-              Já tem uma conta?{' '}
+              Already have an account?{' '}
               <button
                 onClick={() => navigateToView('signin' as any)}
                 className="text-green-600 hover:text-green-800 font-medium"
               >
-                Entre
+                Sign in
               </button>
             </p>
           )}

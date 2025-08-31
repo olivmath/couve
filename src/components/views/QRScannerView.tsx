@@ -27,25 +27,25 @@ export default function QRScannerView() {
     
     switch (errorName) {
       case 'NotAllowedError':
-        return 'Permissão da câmera negada. Para habilitar no iPhone: Configurações > Safari > Câmera > Permitir';
+        return 'Camera permission denied. To enable on iPhone: Settings > Safari > Camera > Allow';
       case 'NotFoundError':
-        return 'Nenhuma câmera encontrada no dispositivo.';
+        return 'No camera found on device.';
       case 'NotReadableError':
-        return 'Câmera está sendo usada por outro aplicativo. Feche outros apps que possam estar usando a câmera.';
+        return 'Camera is being used by another app. Close other apps that might be using the camera.';
       case 'OverconstrainedError':
-        return 'Configurações da câmera não suportadas. Tentando com configurações básicas...';
+        return 'Camera settings not supported. Trying with basic settings...';
       case 'SecurityError':
-        return 'Acesso à câmera bloqueado por questões de segurança. Certifique-se de estar usando HTTPS.';
+        return 'Camera access blocked for security reasons. Make sure you are using HTTPS.';
       case 'AbortError':
-        return 'Operação da câmera foi interrompida.';
+        return 'Camera operation was interrupted.';
       default:
         if (errorMessage.includes('Permission denied')) {
-          return 'Permissão da câmera negada. Para habilitar no iPhone: Configurações > Safari > Câmera > Permitir';
+          return 'Camera permission denied. To enable on iPhone: Settings > Safari > Camera > Allow';
         }
         if (errorMessage.includes('not supported') || errorMessage.includes('não suportada')) {
-           return 'API de câmera não suportada neste navegador. Use Safari, Chrome ou Firefox atualizados.';
+           return 'Camera API not supported in this browser. Use updated Safari, Chrome or Firefox.';
          }
-         return `Erro ao acessar câmera: ${errorMessage || 'Erro desconhecido'}. Verifique as permissões e tente novamente.`;
+         return `Error accessing camera: ${errorMessage || 'Unknown error'}. Check permissions and try again.`;
     }
   };
 
@@ -56,7 +56,7 @@ export default function QRScannerView() {
       
       // Primeiro, verificar se a API está disponível
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        throw new Error('API de câmera não suportada neste navegador');
+        throw new Error('Camera API not supported in this browser');
       }
       
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -112,7 +112,7 @@ export default function QRScannerView() {
   };
 
   const simulateQRScan = () => {
-    // Simular escaneamento de QR code com payload PIX real
+    // Simulate QR code scanning with real PIX payload
     const mockPixPayload = '00020126580014br.gov.bcb.pix013611987654321520400005303986540525.005802BR5913LUCAS BISPO DE6009SAO PAULO62070503***6304A1B2';
     
     setTimeout(() => {
@@ -136,10 +136,10 @@ export default function QRScannerView() {
             className="justify-center whitespace-nowrap rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 text-white font-medium flex items-center p-0"
           >
             <ArrowLeft className="h-4 w-4 mr-1" />
-            Voltar
+            Back
           </button>
           <h2 className="text-xl font-bold text-white">
-            Escanear QR Code
+            Scan QR Code
           </h2>
           <div></div>
         </div>
@@ -154,10 +154,10 @@ export default function QRScannerView() {
               
               <div className="text-center space-y-4">
                 <h3 className="text-xl font-semibold text-white">
-                  Posicione o QR Code na câmera
+                  Position the QR Code in the camera
                 </h3>
                 <p className="text-gray-300">
-                  Aponte a câmera para o QR Code PIX que deseja pagar
+                  Point the camera at the PIX QR Code you want to pay
                 </p>
               </div>
               
@@ -167,50 +167,50 @@ export default function QRScannerView() {
                   
                   {(error.includes('Permissão') || error.includes('Permission')) && (
                     <div className="bg-red-600 p-3 rounded text-sm space-y-2">
-                      <p className="font-semibold">📱 Como habilitar a câmera:</p>
+                      <p className="font-semibold">📱 How to enable camera:</p>
                       <div className="space-y-1">
                         <p><strong>iPhone/iPad (Safari):</strong></p>
-                        <p>1. Configurações → Safari → Câmera → Permitir</p>
-                        <p>2. Ou toque no ícone "aA" na barra de endereço → Configurações do site → Câmera → Permitir</p>
+                        <p>1. Settings → Safari → Camera → Allow</p>
+                        <p>2. Or tap the "aA" icon in address bar → Website Settings → Camera → Allow</p>
                       </div>
                       <div className="space-y-1">
                         <p><strong>Chrome/Firefox:</strong></p>
-                        <p>1. Toque no ícone de cadeado/câmera na barra de endereço</p>
-                        <p>2. Selecione "Permitir" para câmera</p>
+                        <p>1. Tap the lock/camera icon in the address bar</p>
+                        <p>2. Select "Allow" for camera</p>
                       </div>
-                      <p className="text-yellow-200">💡 Dica: Recarregue a página após alterar as permissões</p>
+                      <p className="text-yellow-200">💡 Tip: Reload the page after changing permissions</p>
                     </div>
                   )}
                   
                   {error.includes('HTTPS') && (
                     <div className="bg-red-600 p-3 rounded text-sm">
-                      <p>🔒 <strong>Problema de segurança:</strong></p>
-                      <p>A câmera só funciona em sites seguros (HTTPS). Certifique-se de que a URL começa com "https://"</p>
+                      <p>🔒 <strong>Security issue:</strong></p>
+                      <p>Camera only works on secure sites (HTTPS). Make sure the URL starts with "https://"</p>
                     </div>
                   )}
                   
                   {error.includes('outro aplicativo') && (
                      <div className="bg-red-600 p-3 rounded text-sm">
-                       <p>📱 <strong>Câmera em uso:</strong></p>
-                       <p>Feche outros aplicativos que possam estar usando a câmera (Instagram, TikTok, Zoom, etc.)</p>
+                       <p>📱 <strong>Camera in use:</strong></p>
+                       <p>Close other apps that might be using the camera (Instagram, TikTok, Zoom, etc.)</p>
                      </div>
                    )}
                    
                    {(error.includes('não suportada') || error.includes('not supported')) && (
                      <div className="bg-red-600 p-3 rounded text-sm space-y-2">
-                       <p>🌐 <strong>Navegador não compatível:</strong></p>
+                       <p>🌐 <strong>Incompatible browser:</strong></p>
                        <div className="space-y-1">
-                         <p><strong>Navegadores recomendados:</strong></p>
+                         <p><strong>Recommended browsers:</strong></p>
                          <p>• Safari (iOS 11+)</p>
                          <p>• Chrome (Android/iOS)</p>
                          <p>• Firefox (Android/iOS)</p>
                          <p>• Edge (Windows/Android)</p>
                        </div>
                        <div className="space-y-1">
-                         <p><strong>Alternativas:</strong></p>
-                         <p>• Atualize seu navegador para a versão mais recente</p>
-                         <p>• Tente abrir em outro navegador</p>
-                         <p>• Use o botão "Simular Escaneamento" para testar</p>
+                         <p><strong>Alternatives:</strong></p>
+                         <p>• Update your browser to the latest version</p>
+                         <p>• Try opening in another browser</p>
+                         <p>• Use the "Simulate Scan" button to test</p>
                        </div>
                      </div>
                    )}
@@ -223,7 +223,7 @@ export default function QRScannerView() {
                   className="bg-gradient-to-r from-green-600 to-green-700 text-white py-4 px-8 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all text-lg flex items-center justify-center"
                 >
                   <Camera className="h-5 w-5 mr-2" />
-                  {error ? 'Tentar Novamente' : 'Abrir Câmera'}
+                  {error ? 'Try Again' : 'Open Camera'}
                 </button>
                 
                 {error && (
@@ -234,7 +234,7 @@ export default function QRScannerView() {
                     }}
                     className="bg-gray-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-gray-700 transition-all text-sm"
                   >
-                    Limpar Erro
+                    Clear Error
                   </button>
                 )}
               </div>
@@ -270,7 +270,7 @@ export default function QRScannerView() {
                   </div>
                   
                   <p className="text-white text-center mt-4 font-medium">
-                    Escaneando QR Code...
+                    Scanning QR Code...
                   </p>
                 </div>
               </div>
@@ -288,7 +288,7 @@ export default function QRScannerView() {
                 onClick={simulateQRScan}
                 className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-green-600 text-white py-2 px-4 rounded-lg text-sm"
               >
-                Simular Escaneamento
+                Simulate Scan
               </button>
             </div>
           )}

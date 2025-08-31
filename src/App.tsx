@@ -81,7 +81,7 @@ function App() {
       )}
       
       <div className="p-4 text-center text-xs text-gray-500 pb-20">
-        <p>🥬 Demo KALE Farmer Wallet</p>
+        <p>🥬 Demo Couve Wallet</p>
         <p>Powered by Stellar • Proof-of-Teamwork</p>
       </div>
     </div>
