@@ -3,8 +3,28 @@
  * Baseado na documentação oficial do PIX
  */
 
+export type PixKeyType = 'CPF' | 'CNPJ' | 'EMAIL' | 'PHONE' | 'UUID';
+
+/**
+ * Detecta o tipo de uma chave PIX
+ */
+export function detectPixKeyType(key: string): PixKeyType {
+  if (!key) return 'UUID';
+  
+  const cleanKey = key.replace(/[^a-zA-Z0-9@.-]/g, '');
+  
+  if (/^\d{11}$/.test(cleanKey)) return 'CPF';
+  if (/^\d{14}$/.test(cleanKey)) return 'CNPJ';
+  if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanKey)) return 'EMAIL';
+  if (/^\d{10,11}$/.test(cleanKey)) return 'PHONE';
+  if (/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(cleanKey)) return 'UUID';
+  
+  return 'UUID';
+}
+
 export interface PixData {
   pixKey: string;
+  pixKeyType: PixKeyType;
   amount: string;
   recipientName: string;
   recipientCity: string;
@@ -71,6 +91,7 @@ export function parsePixPayload(payload: string): PixData | null {
     if (data.pixKey && data.amount && data.recipientName) {
       return {
         pixKey: data.pixKey,
+        pixKeyType: detectPixKeyType(data.pixKey),
         amount: data.amount,
         recipientName: data.recipientName,
         recipientCity: data.recipientCity || '',

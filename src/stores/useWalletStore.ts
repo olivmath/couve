@@ -1,6 +1,5 @@
 import { create } from 'zustand';
-import { parsePixPayload, isValidPixPayload, formatRecipientName } from '../lib/pixParser';
-
+import { parsePixPayload, isValidPixPayload, formatRecipientName, PixKeyType, detectPixKeyType } from '../lib/pixParser';
 export type ViewType = 'home' | 'send' | 'deposit' | 'history' | 'success' | 'profile' | 'qr_scanner' | 'pix_key_input' | 'amount_input' | 'confirmation';
 
 export interface Transaction {
@@ -13,6 +12,7 @@ export interface Transaction {
 
 interface PaymentData {
   pixKey: string;
+  pixKeyType: PixKeyType;
   amount: string;
   recipientName?: string;
 }
@@ -22,6 +22,7 @@ interface WalletState {
   balance: number;
   pixAmount: string;
   pixKey: string;
+  pixKeyType: PixKeyType;
   currentView: ViewType;
   isProcessing: boolean;
   qrCodeData: string;
@@ -39,9 +40,10 @@ interface WalletState {
   startPixKeyInput: () => void;
   handleQRScanSuccess: (qrData: string) => void;
   handlePastePixKey: () => Promise<void>;
-  handlePixKeySubmit: (pixKey: string) => void;
+  handlePixKeySubmit: (pixKey: string, pixKeyType: PixKeyType) => void;
   handleAmountSubmit: (amount: string) => void;
-  isValidPixKey: (key: string) => boolean;
+  isValidPixKey: (key: string, type: PixKeyType) => boolean;
+  detectPixKeyType: (key: string) => PixKeyType;
   
   // Setters
   setBalance: (balance: number) => void;
@@ -56,6 +58,7 @@ export const useWalletStore = create<WalletState>((set, get) => ({
   balance: 1247.89,
   pixAmount: '',
   pixKey: '',
+  pixKeyType: 'UUID',
   currentView: 'home',
   isProcessing: false,
   qrCodeData: '',
@@ -113,7 +116,8 @@ export const useWalletStore = create<WalletState>((set, get) => ({
     if (pixData) {
       set({
         paymentData: { 
-          pixKey: pixData.pixKey, 
+          pixKey: pixData.pixKey,
+          pixKeyType: pixData.pixKeyType,
           amount: pixData.amount,
           recipientName: formatRecipientName(pixData.recipientName)
         },
@@ -121,9 +125,14 @@ export const useWalletStore = create<WalletState>((set, get) => ({
       });
     } else {
       // Fallback para QR codes simples (apenas chave PIX)
-      if (get().isValidPixKey(qrData)) {
+      const detectedType = detectPixKeyType(qrData);
+      if (get().isValidPixKey(qrData, detectedType)) {
         set({
-          paymentData: { pixKey: qrData, amount: '50.00' },
+          paymentData: { 
+            pixKey: qrData, 
+            pixKeyType: detectedType,
+            amount: '50.00' 
+          },
           currentView: 'confirmation'
         });
       } else {
@@ -142,7 +151,8 @@ export const useWalletStore = create<WalletState>((set, get) => ({
         if (pixData) {
           set({
             paymentData: { 
-              pixKey: pixData.pixKey, 
+              pixKey: pixData.pixKey,
+              pixKeyType: pixData.pixKeyType,
               amount: pixData.amount,
               recipientName: formatRecipientName(pixData.recipientName)
             },
@@ -153,10 +163,14 @@ export const useWalletStore = create<WalletState>((set, get) => ({
       }
       
       // Fallback para chave PIX simples
-      if (get().isValidPixKey(clipboardText)) {
-        const amount = '25.00'; // Valor padrão para chave PIX simples
+      const detectedType = detectPixKeyType(clipboardText);
+      if (get().isValidPixKey(clipboardText, detectedType)) {
         set({
-          paymentData: { pixKey: clipboardText, amount },
+          paymentData: { 
+            pixKey: clipboardText,
+            pixKeyType: detectedType,
+            amount: '25.00'
+          },
           currentView: 'confirmation'
         });
       } else {
@@ -167,44 +181,49 @@ export const useWalletStore = create<WalletState>((set, get) => ({
     }
   },
   
-  handlePixKeySubmit: (pixKey) => {
+  handlePixKeySubmit: (pixKey, pixKeyType) => {
     set({
       pixKey,
+      pixKeyType,
       currentView: 'amount_input'
     });
   },
   
   handleAmountSubmit: (amount) => {
-    const { pixKey } = get();
+    const { pixKey, pixKeyType } = get();
     if (pixKey) {
       set({
-        paymentData: { pixKey, amount },
+        paymentData: { 
+          pixKey,
+          pixKeyType,
+          amount 
+        },
         currentView: 'confirmation'
       });
     }
   },
+
+  detectPixKeyType: detectPixKeyType,
   
-  isValidPixKey: (key) => {
-    if (!key) return false;
+  isValidPixKey: (key: string, type: PixKeyType) => {
+    if (!key || !type) return false;
     
     const cleanKey = key.replace(/[^a-zA-Z0-9@.-]/g, '');
     
-    // CPF (11 dígitos)
-    if (/^\d{11}$/.test(cleanKey)) return true;
-    
-    // CNPJ (14 dígitos)
-    if (/^\d{14}$/.test(cleanKey)) return true;
-    
-    // Email
-    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanKey)) return true;
-    
-    // Telefone (10 ou 11 dígitos com DDD)
-    if (/^\d{10,11}$/.test(cleanKey)) return true;
-    
-    // Chave aleatória (32 caracteres)
-    if (/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(cleanKey)) return true;
-    
-    return false;
+    switch (type) {
+      case 'CPF':
+        return /^\d{11}$/.test(cleanKey);
+      case 'CNPJ':
+        return /^\d{14}$/.test(cleanKey);
+      case 'EMAIL':
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanKey);
+      case 'PHONE':
+        return /^\d{10,11}$/.test(cleanKey);
+      case 'UUID':
+        return /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(cleanKey);
+      default:
+        return false;
+    }
   },
   
   canSendPIX: () => {

@@ -4,12 +4,12 @@ import AddressDisplay from '../AddressDisplay';
 import { useWalletStore } from '../../stores/useWalletStore';
 
 export default function AmountInputView() {
-  const { paymentData, setCurrentView, handleAmountSubmit } = useWalletStore();
+  const { setCurrentView, handleAmountSubmit } = useWalletStore();
   const [amount, setAmount] = useState('');
   const [kaleAmount, setKaleAmount] = useState('0.00');
 
   // Simular conversão BRL para KALE (taxa fictícia: 1 BRL = 2.381 KALE)
-  const brlToKaleRate = 2.381;
+  const brlToKaleRate = 23.81;
 
   useEffect(() => {
     const numericAmount = parseFloat(amount) || 0;
@@ -67,18 +67,6 @@ export default function AmountInputView() {
           <div></div>
         </div>
 
-        {/* Recipient Info */}
-        <div className="bg-gray-50 rounded-lg p-4">
-          <label className="block text-sm font-medium text-gray-600 mb-1">
-            Destinatário
-          </label>
-          <p className="text-lg font-semibold text-gray-800">
-            <AddressDisplay 
-              address={paymentData?.pixKey || ''} 
-              showIcons={true}
-            />
-          </p>
-        </div>
 
         {/* Amount Input */}
         <div className="space-y-4">
@@ -102,7 +90,7 @@ export default function AmountInputView() {
           {isValidAmount && (
             <p className="text-sm text-gray-600 flex items-center">
               <Leaf className="h-4 w-4 text-green-500 mr-1" />
-              Será colhido: {kaleAmount} KALE
+              {kaleAmount} KALE
             </p>
           )}
         </div>

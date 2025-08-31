@@ -1,43 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useWalletStore } from '../../stores/useWalletStore';
+import { PixKeyType, detectPixKeyType } from '../../lib/pixParser';
 
 export default function PixKeyInputView() {
   const { setCurrentView, handlePixKeySubmit } = useWalletStore();
   const [pixKey, setPixKey] = useState('');
   const [isValid, setIsValid] = useState(false);
+  const [pixKeyType, setPixKeyType] = useState<PixKeyType | null>(null);
 
   const isValidPixKey = (key: string): boolean => {
     if (!key) return false;
-    
-    // Remove espaços e caracteres especiais para validação
     const cleanKey = key.replace(/[^a-zA-Z0-9@.-]/g, '');
-    
-    // CPF (11 dígitos)
-    if (/^\d{11}$/.test(cleanKey)) return true;
-    
-    // CNPJ (14 dígitos)
-    if (/^\d{14}$/.test(cleanKey)) return true;
-    
-    // Email
-    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanKey)) return true;
-    
-    // Telefone (10 ou 11 dígitos com DDD)
-    if (/^\d{10,11}$/.test(cleanKey)) return true;
-    
-    // Chave aleatória (32 caracteres)
-    if (/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(cleanKey)) return true;
-    
-    return false;
+    return cleanKey.length > 0;
   };
 
   useEffect(() => {
-    setIsValid(isValidPixKey(pixKey));
+    const isKeyValid = isValidPixKey(pixKey);
+    setIsValid(isKeyValid);
+    setPixKeyType(isKeyValid ? detectPixKeyType(pixKey) : null);
   }, [pixKey]);
 
   const handleNext = () => {
-    if (isValid) {
-      handlePixKeySubmit(pixKey);
+    if (isValid && pixKeyType) {
+      handlePixKeySubmit(pixKey, pixKeyType);
     }
   };
 
@@ -88,9 +74,9 @@ export default function PixKeyInputView() {
             </p>
           )}
           
-          {isValid && (
+          {isValid && pixKeyType && (
             <p className="text-sm text-green-600 flex items-center">
-              ✓ Chave PIX válida
+              ✓ Chave PIX válida - Tipo: {pixKeyType}
             </p>
           )}
         </div>

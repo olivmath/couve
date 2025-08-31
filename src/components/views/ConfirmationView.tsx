@@ -51,15 +51,19 @@ export default function ConfirmationView() {
         <div className="bg-gray-50 rounded-lg p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">
-              Destinatário
+              Destinatário {paymentData?.recipientName}
             </label>
+            <div className="flex items-center gap-2 mb-1">
+               <span className="text-xs bg-gray-200 px-2 py-1 rounded-full">
+                 {paymentData?.pixKeyType === 'CPF' ? 'CPF' :
+                  paymentData?.pixKeyType === 'CNPJ' ? 'CNPJ' :
+                  paymentData?.pixKeyType === 'EMAIL' ? 'E-mail' :
+                  paymentData?.pixKeyType === 'PHONE' ? 'Telefone' :
+                  paymentData?.pixKeyType === 'UUID' ? 'Chave Aleatória' : 'Desconhecido'}
+               </span>
+             </div>
             <p className="text-lg font-semibold text-gray-800">
-              {paymentData?.recipientName || (
-                <AddressDisplay 
-                  address={paymentData?.pixKey || ''} 
-                  showIcons={false}
-                />
-              )}
+              {paymentData?.pixKey}
             </p>
             {paymentData?.recipientName && (
               <p className="text-sm text-gray-500 mt-1">
