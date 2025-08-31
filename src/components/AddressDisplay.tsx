@@ -1,6 +1,6 @@
 import React from 'react';
 import { Copy, ExternalLink } from 'lucide-react';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
+import copy from 'copy-to-clipboard';
 
 interface AddressDisplayProps {
   address: string;
@@ -25,6 +25,12 @@ const AddressDisplay: React.FC<AddressDisplayProps> = ({
     return `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
   };
 
+  const handleCopy = () => {
+    copy(address);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
 
   return (
     <div className={`flex items-center justify-between ${className}`}>
@@ -42,18 +48,17 @@ const AddressDisplay: React.FC<AddressDisplayProps> = ({
       
       {showIcons && (
         <div className="flex space-x-1">
-          <CopyToClipboard text={address} onCopy={() => setCopied(true)}>
-            <button 
-              className="p-1 rounded-md hover:bg-green-100 transition-colors"
-              title="Copiar endereço"
-            >
-              {copied ? (
-                <span className="text-xs text-green-600 font-medium">Copiado!</span>
-              ) : (
-                <Copy className="h-4 w-4 text-green-600" />
-              )}
-            </button>
-          </CopyToClipboard>
+          <button 
+            onClick={handleCopy}
+            className="p-1 rounded-md hover:bg-green-100 transition-colors"
+            title="Copiar endereço"
+          >
+            {copied ? (
+              <span className="text-xs text-green-600 font-medium">Copiado!</span>
+            ) : (
+              <Copy className="h-4 w-4 text-green-600" />
+            )}
+          </button>
           
           {explorerUrl && (
             <a 
