@@ -6,7 +6,7 @@ import { useWalletStore } from "@/stores/useWalletStore";
 import { useStellarAccount } from "../../lib/useStellarAccount";
 
 const HomeView: React.FC = () => {
-  const { kaleToBRL, setStellarBalance, setStellarAccount, updateKalePrice } = useWalletStore();
+  const { kaleToBRL, kaleToUSD, setStellarBalance, setStellarAccount, updateKalePrice } = useWalletStore();
   const { stellarAccount, balance, refreshBalance } = useStellarAccount();
   
   // Por enquanto, assumir que o balance já representa KALE
@@ -39,7 +39,7 @@ const HomeView: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-20">
-      <BalanceCard kaleBalance={kaleBalance} kaleToBRL={kaleToBRL} />
+      <BalanceCard kaleBalance={kaleBalance} kaleToBRL={kaleToBRL} kaleToUSD={kaleToUSD} />
       <QuickActions />
       <MeridianEventsCarousel />
     </div>

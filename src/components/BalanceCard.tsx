@@ -50,9 +50,14 @@ const BalanceCard: React.FC<BalanceCardProps> = ({ kaleBalance, kaleToBRL, kaleT
           </div>
           <div className="text-right">
             <p className="text-slate-400 text-xs mb-1">KALE Price</p>
-            <p className="text-sm font-medium text-slate-300">
-              R$ {kaleToBRLPrice.toFixed(4)} BRL
-            </p>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-slate-300">
+                U$ {kaleToUSD.toFixed(6)} USD
+              </p>
+              <p className="text-sm font-medium text-slate-300">
+                R$ {kaleToBRLPrice.toFixed(6)} BRL
+              </p>
+            </div>
           </div>
         </div>
       </CardContent>

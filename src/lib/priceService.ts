@@ -3,6 +3,9 @@ const KALE_ASSET_CODE = 'KALE';
 const KALE_ISSUER = 'GBDVX4VELCDSQ54KQJYTNHXAHFLBCA77ZY2USQBM4CSHTTV7DME7KALE';
 const HORIZON_SERVER = 'https://horizon.stellar.org';
 
+// Importar o scraper do Stellar Expert
+import StellarExpertScraper from './stellarExpertScraper';
+
 // Interface para dados de preço
 interface PriceData {
   price: number;
@@ -12,19 +15,19 @@ interface PriceData {
 export class PriceService {
 
   /**
-   * Busca o preço do KALE em BRL seguindo o caminho KALE -> XLM -> BRL
-   * Usa dados reais da rede Stellar Pubnet
+   * Busca o preço do KALE em BRL usando dados dinâmicos do pool
+   * Usa dados reais do pool KALE/USDC no Stellar Expert
    */
   static async getKalePrice(): Promise<number> {
     try {
-      // 1. Buscar preço KALE/XLM via StellarExpert API
-      const kaleToXlmPrice = await this.getKaleToXlmPrice();
+      // 1. Buscar preço KALE/USDC via scraping dinâmico
+      const kaleToUsdPrice = await this.getKalePriceFromPool();
       
-      // 2. Buscar preço XLM/BRL (usando USD como proxy por enquanto)
-      const xlmToBrlPrice = await this.getXlmToBrlPrice();
+      // 2. Buscar preço USD/BRL
+      const usdToBrlPrice = await this.getUsdToBrlPrice();
       
       // 3. Calcular KALE -> BRL
-      const kaleToBrlPrice = kaleToXlmPrice * xlmToBrlPrice;
+      const kaleToBrlPrice = kaleToUsdPrice * usdToBrlPrice;
       
       return kaleToBrlPrice;
     } catch (error) {
@@ -86,15 +89,7 @@ export class PriceService {
       const xlmToUsd = xlmUsdData.stellar?.usd || 0.1; // Fallback
       
       // Buscar USD/BRL
-      const usdBrlResponse = await fetch(
-        'https://api.coingecko.com/api/v3/simple/price?ids=usd&vs_currencies=brl'
-      );
-      
-      let usdToBrl = 5.5; // Fallback
-      if (usdBrlResponse.ok) {
-        const usdBrlData = await usdBrlResponse.json();
-        usdToBrl = usdBrlData.usd?.brl || 5.5;
-      }
+      const usdToBrl = await this.getUsdToBrlPrice();
       
       return xlmToUsd * usdToBrl;
     } catch (error) {
@@ -105,23 +100,71 @@ export class PriceService {
   }
 
   /**
+   * Busca o preço USD/BRL usando API externa
+   */
+  static async getUsdToBrlPrice(): Promise<number> {
+    try {
+      // Usar CoinGecko para buscar USD/BRL
+      const response = await fetch(
+        'https://api.coingecko.com/api/v3/simple/price?ids=usd&vs_currencies=brl'
+      );
+      
+      if (!response.ok) {
+        // Tentar API alternativa
+        const altResponse = await fetch(
+          'https://api.exchangerate-api.com/v4/latest/USD'
+        );
+        
+        if (altResponse.ok) {
+          const altData = await altResponse.json();
+          return altData.rates?.BRL || 5.5;
+        }
+        
+        throw new Error('Falha ao buscar preço USD/BRL');
+      }
+      
+      const data = await response.json();
+      const usdToBrl = data.usd?.brl || 5.5; // Fallback
+      
+      return usdToBrl;
+    } catch (error) {
+      console.error('Erro ao buscar preço USD/BRL:', error);
+      // Fallback para taxa aproximada atual
+      return 5.5; // Taxa aproximada USD/BRL
+    }
+  }
+
+  /**
    * Busca o preço do KALE usando dados do pool de liquidez
    * Baseado nas informações do pool KALE/USDC
    */
   static async getKalePriceFromPool(): Promise<number> {
     try {
-      // Dados do pool KALE/USDC da documentação:
-      // Liquidity: 1,769 USDC e 4,595,406 KALE
-      const usdcLiquidity = 1769;
-      const kaleLiquidity = 4595406;
+      // Buscar dados dinâmicos do pool via scraping
+      const poolData = await StellarExpertScraper.getPoolData();
       
-      // Calcular preço: USDC / KALE
-      const price = usdcLiquidity / kaleLiquidity;
-      
-      return price;
+      // Retornar o preço calculado dinamicamente
+      return poolData.kalePrice;
     } catch (error) {
-      console.error('Erro ao calcular preço do pool:', error);
+      console.error('Erro ao buscar preço do pool:', error);
       return 0.000385; // Fallback
+    }
+  }
+
+  /**
+   * Busca o preço do KALE em USD usando dados dinâmicos do pool
+   */
+  static async getKalePriceUSD(): Promise<number> {
+    try {
+      // Usar dados dinâmicos do pool KALE/USDC diretamente
+      const kalePrice = await this.getKalePriceFromPool();
+      
+      // O preço já está em USDC, que é aproximadamente igual a USD
+      return kalePrice;
+    } catch (error) {
+      console.error('Erro ao buscar preço do KALE em USD:', error);
+      // Fallback para preço simulado em USD
+      return 0.000385;
     }
   }
 
@@ -129,7 +172,7 @@ export class PriceService {
    * Converte valor em KALE para USD
    */
   static async convertKaleToUSD(kaleAmount: number): Promise<number> {
-    const price = await this.getKalePrice();
+    const price = await this.getKalePriceUSD();
     return kaleAmount * price;
   }
 

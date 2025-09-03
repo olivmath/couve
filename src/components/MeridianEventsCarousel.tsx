@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Calendar, MapPin, ExternalLink, Users } from 'lucide-react';
+import LumaScraper from '../lib/lumaScraper';
 
 interface Event {
   id: string;
@@ -20,47 +21,14 @@ const MeridianEventsCarousel: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Função para buscar eventos da API do Luma
+  // Função para buscar eventos usando o LumaScraper
   const fetchEventsFromLuma = async () => {
     try {
-      // Exemplo de integração com API do Luma
-       // Você precisará configurar sua API key do Luma
-       const LUMA_API_KEY = import.meta.env.VITE_LUMA_API_KEY;
-      
-      if (LUMA_API_KEY) {
-        const response = await fetch('https://public-api.luma.com/v1/calendar/get-events', {
-          headers: {
-            'x-luma-api-key': LUMA_API_KEY,
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          // Transformar dados da API do Luma para o formato do componente
-          return data.entries?.map((event: any) => ({
-            id: event.api_id,
-            title: event.name,
-            date: new Date(event.start_at).toLocaleDateString('pt-BR', {
-              month: 'short',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
-            }),
-            location: event.geo_address_info?.city || 'Rio de Janeiro',
-            description: event.description || 'Evento do Meridian 2025',
-            url: event.url,
-            attendees: event.guest_count || 0,
-            category: event.series_api_id ? 'Conference' : 'Side Event',
-            image: event.cover_url
-          })) || [];
-        }
-      }
-      
-      // Fallback para dados mockados se não houver API key
-      throw new Error('API key não configurada');
+      // Usar o LumaScraper para buscar eventos dinamicamente
+      const events = await LumaScraper.getEvents();
+      return events;
     } catch (error) {
-      console.log('Usando dados mockados:', error);
+      console.error('Erro ao buscar eventos via scraping:', error);
       // Retorna dados mockados como fallback
       return [
         {
