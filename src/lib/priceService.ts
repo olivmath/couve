@@ -20,20 +20,27 @@ export class PriceService {
    */
   static async getKalePrice(): Promise<number> {
     try {
+      console.log('🔍 [PriceService] Iniciando busca do preço KALE em BRL...');
+      
       // 1. Buscar preço KALE/USDC via scraping dinâmico
       const kaleToUsdPrice = await this.getKalePriceFromPool();
+      console.log('💰 [PriceService] Preço KALE/USD do pool:', kaleToUsdPrice);
       
       // 2. Buscar preço USD/BRL
       const usdToBrlPrice = await this.getUsdToBrlPrice();
+      console.log('💱 [PriceService] Taxa USD/BRL:', usdToBrlPrice);
       
       // 3. Calcular KALE -> BRL
       const kaleToBrlPrice = kaleToUsdPrice * usdToBrlPrice;
+      console.log('🥬 [PriceService] Preço final KALE/BRL:', kaleToBrlPrice);
       
       return kaleToBrlPrice;
     } catch (error) {
-      console.error('Erro ao buscar preço do KALE:', error);
+      console.error('❌ [PriceService] Erro ao buscar preço do KALE:', error);
       // Fallback para preço simulado em BRL
-      return 0.42; // ~0.000385 USD * 5.5 USD/BRL
+      const fallbackPrice = 0.42; // ~0.000385 USD * 5.5 USD/BRL
+      console.log('🔄 [PriceService] Usando preço fallback:', fallbackPrice);
+      return fallbackPrice;
     }
   }
 
@@ -140,14 +147,20 @@ export class PriceService {
    */
   static async getKalePriceFromPool(): Promise<number> {
     try {
+      console.log('🏊 [PriceService] Buscando dados do pool KALE/USDC...');
+      
       // Buscar dados dinâmicos do pool via scraping
       const poolData = await StellarExpertScraper.getPoolData();
+      console.log('📊 [PriceService] Dados do pool obtidos:', poolData);
       
       // Retornar o preço calculado dinamicamente
+      console.log('💎 [PriceService] Preço KALE do pool:', poolData.kalePrice);
       return poolData.kalePrice;
     } catch (error) {
-      console.error('Erro ao buscar preço do pool:', error);
-      return 0.000385; // Fallback
+      console.error('❌ [PriceService] Erro ao buscar preço do pool:', error);
+      const fallbackPrice = 0.000385; // Fallback
+      console.log('🔄 [PriceService] Usando preço fallback do pool:', fallbackPrice);
+      return fallbackPrice;
     }
   }
 
@@ -156,15 +169,20 @@ export class PriceService {
    */
   static async getKalePriceUSD(): Promise<number> {
     try {
+      console.log('🔍 [PriceService] Iniciando busca do preço KALE em USD...');
+      
       // Usar dados dinâmicos do pool KALE/USDC diretamente
       const kalePrice = await this.getKalePriceFromPool();
+      console.log('💰 [PriceService] Preço KALE/USD obtido:', kalePrice);
       
       // O preço já está em USDC, que é aproximadamente igual a USD
       return kalePrice;
     } catch (error) {
-      console.error('Erro ao buscar preço do KALE em USD:', error);
+      console.error('❌ [PriceService] Erro ao buscar preço do KALE em USD:', error);
       // Fallback para preço simulado em USD
-      return 0.000385;
+      const fallbackPrice = 0.000385;
+      console.log('🔄 [PriceService] Usando preço fallback USD:', fallbackPrice);
+      return fallbackPrice;
     }
   }
 

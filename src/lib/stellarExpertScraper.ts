@@ -18,30 +18,47 @@ export class StellarExpertScraper {
    */
   static async getPoolData(): Promise<PoolData> {
     try {
+      console.log('🌐 [StellarExpertScraper] Fazendo requisição para API do Stellar Expert...');
+      
       // Como não podemos fazer scraping direto do browser devido ao CORS,
       // vamos usar uma abordagem alternativa com a API do Stellar Expert
-      const response = await fetch(`https://api.stellar.expert/explorer/public/liquidity-pool/cf227a44e39d7cff8c927bc48c9b4c03b06ec76c9da8dde9ae6930888b583a68`);
+      const apiUrl = `https://api.stellar.expert/explorer/public/liquidity-pool/cf227a44e39d7cff8c927bc48c9b4c03b06ec76c9da8dde9ae6930888b583a68`;
+      console.log('🔗 [StellarExpertScraper] URL da API:', apiUrl);
+      
+      const response = await fetch(apiUrl);
+      console.log('📡 [StellarExpertScraper] Status da resposta:', response.status, response.statusText);
       
       if (!response.ok) {
-        throw new Error('Falha ao buscar dados do pool');
+        throw new Error(`Falha ao buscar dados do pool: ${response.status} ${response.statusText}`);
       }
       
       const data = await response.json();
+      console.log('📋 [StellarExpertScraper] Dados brutos da API:', data);
       
       // Extrair dados relevantes da resposta da API
       const reserves = data.reserves || [];
+      console.log('💰 [StellarExpertScraper] Reservas encontradas:', reserves);
+      
       const usdcReserve = reserves.find((r: any) => r.asset?.code === 'USDC');
       const kaleReserve = reserves.find((r: any) => r.asset?.code === 'KALE');
       
+      console.log('💵 [StellarExpertScraper] Reserva USDC:', usdcReserve);
+      console.log('🥬 [StellarExpertScraper] Reserva KALE:', kaleReserve);
+      
       const usdcLiquidity = parseFloat(usdcReserve?.amount || '0');
       const kaleLiquidity = parseFloat(kaleReserve?.amount || '0');
+      
+      console.log('📊 [StellarExpertScraper] Liquidez USDC:', usdcLiquidity);
+      console.log('📊 [StellarExpertScraper] Liquidez KALE:', kaleLiquidity);
       
       // Calcular preço KALE em USDC
       const kalePrice = usdcLiquidity > 0 && kaleLiquidity > 0 
         ? usdcLiquidity / kaleLiquidity 
         : 0;
       
-      return {
+      console.log('💎 [StellarExpertScraper] Preço KALE calculado:', kalePrice);
+      
+      const poolData = {
         totalValueLocked: data.total_value_locked || 0,
         usdcLiquidity,
         kaleLiquidity,
@@ -50,10 +67,14 @@ export class StellarExpertScraper {
         trades: data.trades_count || 0,
         participants: data.accounts_count || 0
       };
+      
+      console.log('✅ [StellarExpertScraper] Dados finais do pool:', poolData);
+      return poolData;
     } catch (error) {
-      console.error('Erro ao buscar dados do pool:', error);
+      console.error('❌ [StellarExpertScraper] Erro ao buscar dados do pool:', error);
       
       // Fallback: tentar scraping via proxy ou usar dados estáticos
+      console.log('🔄 [StellarExpertScraper] Tentando fallback...');
       return this.getFallbackPoolData();
     }
   }

@@ -97,13 +97,20 @@ export const useWalletStore = create<WalletState>((set, get) => ({
   // Atualizar preço do KALE em BRL e USD
   updateKalePrice: async () => {
     try {
+      console.log('🔄 [WalletStore] Iniciando atualização de preços do KALE...');
+      
       const [priceBRL, priceUSD] = await Promise.all([
         PriceService.getKalePrice(),
         PriceService.getKalePriceUSD()
       ]);
+      
+      console.log('💰 [WalletStore] Preços obtidos - BRL:', priceBRL, 'USD:', priceUSD);
+      
       set({ kaleToBRL: priceBRL, kaleToUSD: priceUSD });
+      
+      console.log('✅ [WalletStore] Preços atualizados no store');
     } catch (error) {
-      console.error('Erro ao atualizar preço do KALE:', error);
+      console.error('❌ [WalletStore] Erro ao atualizar preço do KALE:', error);
     }
   },
   

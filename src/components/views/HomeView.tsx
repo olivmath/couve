@@ -23,17 +23,23 @@ const HomeView: React.FC = () => {
   // Atualizar saldo e preço periodicamente
   useEffect(() => {
     if (stellarAccount) {
+      console.log('⏰ [HomeView] Configurando intervalo para atualização periódica...');
       const interval = setInterval(() => {
+        console.log('🔄 [HomeView] Executando atualização periódica...');
         refreshBalance();
         updateKalePrice();
       }, 30000); // Atualizar a cada 30 segundos
 
-      return () => clearInterval(interval);
+      return () => {
+        console.log('🛑 [HomeView] Limpando intervalo de atualização');
+        clearInterval(interval);
+      };
     }
   }, [stellarAccount, refreshBalance, updateKalePrice]);
 
   // Atualizar preço do KALE na inicialização
   useEffect(() => {
+    console.log('🚀 [HomeView] Atualizando preço do KALE na inicialização...');
     updateKalePrice();
   }, [updateKalePrice]);
 

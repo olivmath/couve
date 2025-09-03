@@ -10,9 +10,13 @@ interface BalanceCardProps {
 }
 
 const BalanceCard: React.FC<BalanceCardProps> = ({ kaleBalance, kaleToBRL, kaleToUSD = 0.000385 }) => {
+  console.log('💳 [BalanceCard] Props recebidas:', { kaleBalance, kaleToBRL, kaleToUSD });
+  
   const brlBalance = kaleBalance * kaleToBRL;
   const kaleToBRLPrice = kaleToBRL;
   const usdBalance = kaleBalance * kaleToUSD;
+  
+  console.log('🧮 [BalanceCard] Valores calculados:', { brlBalance, kaleToBRLPrice, usdBalance });
   
   return (
     <Card className="bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 text-white relative overflow-hidden border-0 aspect-[1.6/1]">
