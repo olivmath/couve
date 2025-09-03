@@ -14,6 +14,7 @@ interface LumaEvent {
 
 export class LumaScraper {
   private static readonly EVENTS_URL = 'https://luma.com/meridian-2025-side-events?k=c';
+  private static cachedEvents: LumaEvent[] | null = null;
   
   /**
    * Busca eventos do Meridian 2025 via scraping
@@ -33,12 +34,48 @@ export class LumaScraper {
       
       // Fazer parsing do HTML para extrair eventos
       const events = this.parseEventsFromHTML(html);
+      this.cachedEvents = events;
       return events;
     } catch (error) {
       console.error('Erro ao buscar eventos:', error);
       
       // Retornar dados estáticos baseados na última consulta conhecida
-      return this.getFallbackEvents();
+      const fallbackEvents = this.getFallbackEvents();
+      this.cachedEvents = fallbackEvents;
+      return fallbackEvents;
+    }
+  }
+
+  /**
+   * Retorna eventos progressivamente, um por vez
+   */
+  static async* getEventsProgressively(): AsyncGenerator<LumaEvent, void, unknown> {
+    try {
+      // Se já temos eventos em cache, usar eles
+      if (this.cachedEvents) {
+        for (const event of this.cachedEvents) {
+          yield event;
+          // Pequeno delay para simular carregamento progressivo
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+        return;
+      }
+
+      // Caso contrário, buscar eventos e retornar progressivamente
+      const events = await this.getEvents();
+      for (const event of events) {
+        yield event;
+        // Pequeno delay para simular carregamento progressivo
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+    } catch (error) {
+      console.error('Erro ao buscar eventos progressivamente:', error);
+      // Em caso de erro, retornar eventos fallback progressivamente
+      const fallbackEvents = this.getFallbackEvents();
+      for (const event of fallbackEvents) {
+        yield event;
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
     }
   }
   

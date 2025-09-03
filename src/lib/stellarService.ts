@@ -1,8 +1,5 @@
 import { Keypair, Networks, Account, TransactionBuilder, Operation, Asset, Horizon } from '@stellar/stellar-sdk';
-
-// Configuração para testnet
-const server = new Horizon.Server('https://horizon-testnet.stellar.org');
-const networkPassphrase = Networks.TESTNET;
+import { NetworkType } from '../stores/useWalletStore';
 
 export interface StellarAccount {
   publicKey: string;
@@ -11,6 +8,21 @@ export interface StellarAccount {
 }
 
 export class StellarService {
+  /**
+   * Retorna o servidor Horizon baseado na rede selecionada
+   */
+  static getHorizonServer(networkType: NetworkType): Horizon.Server {
+    return networkType === 'mainnet' 
+      ? new Horizon.Server('https://horizon.stellar.org')
+      : new Horizon.Server('https://horizon-testnet.stellar.org');
+  }
+
+  /**
+   * Retorna o network passphrase baseado na rede selecionada
+   */
+  static getNetworkPassphrase(networkType: NetworkType): string {
+    return networkType === 'mainnet' ? Networks.PUBLIC : Networks.TESTNET;
+  }
   /**
    * Gera um keypair Stellar determinístico baseado no ID do usuário (versão async)
    * Isso garante que o mesmo usuário sempre tenha a mesma conta
@@ -65,8 +77,9 @@ export class StellarService {
   /**
    * Verifica se uma conta existe na rede Stellar
    */
-  static async accountExists(publicKey: string): Promise<boolean> {
+  static async accountExists(publicKey: string, networkType: NetworkType = 'testnet'): Promise<boolean> {
     try {
+      const server = this.getHorizonServer(networkType);
       await server.loadAccount(publicKey);
       return true;
     } catch (error: any) {
@@ -79,8 +92,14 @@ export class StellarService {
 
   /**
    * Solicita faucet para uma conta na testnet
+   * Só funciona na testnet
    */
-  static async requestFaucet(publicKey: string): Promise<boolean> {
+  static async requestFaucet(publicKey: string, networkType: NetworkType = 'testnet'): Promise<boolean> {
+    if (networkType === 'mainnet') {
+      console.error('Faucet não disponível na mainnet');
+      return false;
+    }
+
     try {
       const response = await fetch(
         `https://friendbot.stellar.org?addr=${encodeURIComponent(publicKey)}`
@@ -102,8 +121,9 @@ export class StellarService {
   /**
    * Obtém o saldo de uma conta
    */
-  static async getAccountBalance(publicKey: string): Promise<number> {
+  static async getAccountBalance(publicKey: string, networkType: NetworkType = 'testnet'): Promise<number> {
     try {
+      const server = this.getHorizonServer(networkType);
       const account = await server.loadAccount(publicKey);
       const xlmBalance = account.balances.find(
         (balance: any) => balance.asset_type === 'native'
@@ -119,17 +139,22 @@ export class StellarService {
    * Cria e financia uma nova conta Stellar
    * Retorna true se a conta foi criada com sucesso ou já existia
    */
-  static async createAndFundAccount(userId: string): Promise<StellarAccount | null> {
+  static async createAndFundAccount(userId: string, networkType: NetworkType = 'testnet'): Promise<StellarAccount | null> {
     try {
       // Gerar keypair determinístico
       const stellarAccount = this.generateKeypairFromUserIdSync(userId);
       
       // Verificar se a conta já existe
-      const exists = await this.accountExists(stellarAccount.publicKey);
+      const exists = await this.accountExists(stellarAccount.publicKey, networkType);
       
       if (!exists) {
-        // Solicitar faucet para criar e financiar a conta
-        const faucetSuccess = await this.requestFaucet(stellarAccount.publicKey);
+        if (networkType === 'mainnet') {
+          console.error('Não é possível criar conta automaticamente na mainnet. Conta deve ser financiada manualmente.');
+          return null;
+        }
+        
+        // Solicitar faucet para criar e financiar a conta (apenas testnet)
+        const faucetSuccess = await this.requestFaucet(stellarAccount.publicKey, networkType);
         
         if (!faucetSuccess) {
           console.error('Falha ao solicitar faucet');
@@ -140,7 +165,7 @@ export class StellarService {
         await new Promise(resolve => setTimeout(resolve, 3000));
         
         // Verificar se a conta foi criada
-        const accountCreated = await this.accountExists(stellarAccount.publicKey);
+        const accountCreated = await this.accountExists(stellarAccount.publicKey, networkType);
         if (!accountCreated) {
           console.error('Conta não foi criada após faucet');
           return null;

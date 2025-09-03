@@ -58,6 +58,12 @@ export class StellarExpertScraper {
       
       console.log('💎 [StellarExpertScraper] Preço KALE calculado:', kalePrice);
       
+      // Validar se o preço calculado é razoável
+      if (kalePrice <= 0 || kalePrice > 1) {
+        console.warn('⚠️ [StellarExpertScraper] Preço KALE suspeito:', kalePrice, 'usando fallback');
+        throw new Error(`Preço KALE inválido: ${kalePrice}`);
+      }
+      
       const poolData = {
         totalValueLocked: data.total_value_locked || 0,
         usdcLiquidity,

@@ -5,6 +5,9 @@ import DepositView from './components/views/DepositView';
 import HistoryView from './components/views/HistoryView';
 import SuccessView from './components/views/SuccessView';
 import ProfileView from './components/views/ProfileView';
+import DebuggerView from './components/views/DebuggerView';
+import SecurityView from './components/views/SecurityView';
+import SettingsView from './components/views/SettingsView';
 import QRScannerView from './components/views/QRScannerView';
 import PixKeyInputView from './components/views/PixKeyInputView';
 import AmountInputView from './components/views/AmountInputView';
@@ -50,6 +53,12 @@ function App() {
         return <ProtectedRoute><HistoryView /></ProtectedRoute>;
       case 'profile':
         return <ProtectedRoute><ProfileView /></ProtectedRoute>;
+      case 'debugger':
+        return <ProtectedRoute><DebuggerView /></ProtectedRoute>;
+      case 'security':
+        return <ProtectedRoute><SecurityView /></ProtectedRoute>;
+      case 'settings':
+        return <ProtectedRoute><SettingsView /></ProtectedRoute>;
       case 'qr_scanner':
         return <ProtectedRoute><QRScannerView /></ProtectedRoute>;
       case 'pix_key_input':

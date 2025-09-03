@@ -1,10 +1,12 @@
-// Configuração para Stellar Pubnet
-const KALE_ASSET_CODE = 'KALE';
-const KALE_ISSUER = 'GBDVX4VELCDSQ54KQJYTNHXAHFLBCA77ZY2USQBM4CSHTTV7DME7KALE';
-const HORIZON_SERVER = 'https://horizon.stellar.org';
-
 // Importar o scraper do Stellar Expert
 import StellarExpertScraper from './stellarExpertScraper';
+import { getKaleConfig } from './kaleConfig';
+
+// Função para obter configuração da rede atual
+// Como este é um serviço estático, vamos usar mainnet como padrão
+const getNetworkConfig = () => {
+  return getKaleConfig('mainnet');
+};
 
 // Interface para dados de preço
 interface PriceData {
@@ -26,13 +28,31 @@ export class PriceService {
       const kaleToUsdPrice = await this.getKalePriceFromPool();
       console.log('💰 [PriceService] Preço KALE/USD do pool:', kaleToUsdPrice);
       
+      // Validar preço USD
+      if (!kaleToUsdPrice || kaleToUsdPrice <= 0) {
+        console.error('❌ [PriceService] Preço KALE/USD inválido:', kaleToUsdPrice);
+        throw new Error(`Preço KALE/USD inválido: ${kaleToUsdPrice}`);
+      }
+      
       // 2. Buscar preço USD/BRL
       const usdToBrlPrice = await this.getUsdToBrlPrice();
       console.log('💱 [PriceService] Taxa USD/BRL:', usdToBrlPrice);
       
+      // Validar taxa USD/BRL
+      if (!usdToBrlPrice || usdToBrlPrice <= 0) {
+        console.error('❌ [PriceService] Taxa USD/BRL inválida:', usdToBrlPrice);
+        throw new Error(`Taxa USD/BRL inválida: ${usdToBrlPrice}`);
+      }
+      
       // 3. Calcular KALE -> BRL
       const kaleToBrlPrice = kaleToUsdPrice * usdToBrlPrice;
       console.log('🥬 [PriceService] Preço final KALE/BRL:', kaleToBrlPrice);
+      
+      // Validar preço final
+      if (!kaleToBrlPrice || kaleToBrlPrice <= 0) {
+        console.error('❌ [PriceService] Preço final KALE/BRL inválido:', kaleToBrlPrice);
+        throw new Error(`Preço final KALE/BRL inválido: ${kaleToBrlPrice}`);
+      }
       
       return kaleToBrlPrice;
     } catch (error) {
@@ -49,9 +69,10 @@ export class PriceService {
    */
   static async getKaleToXlmPrice(): Promise<number> {
     try {
+      const config = getNetworkConfig();
       // Usar StellarExpert API para buscar dados do mercado KALE/XLM
       const response = await fetch(
-        `https://api.stellar.expert/explorer/public/asset/${KALE_ASSET_CODE}-${KALE_ISSUER}/markets`
+        `https://api.stellar.expert/explorer/public/asset/${config.ASSET_CODE}-${config.ISSUER}/markets`
       );
       
       if (!response.ok) {
@@ -153,6 +174,12 @@ export class PriceService {
       const poolData = await StellarExpertScraper.getPoolData();
       console.log('📊 [PriceService] Dados do pool obtidos:', poolData);
       
+      // Validar dados do pool
+      if (!poolData || typeof poolData.kalePrice !== 'number' || poolData.kalePrice <= 0) {
+        console.error('❌ [PriceService] Dados do pool inválidos:', poolData);
+        throw new Error(`Dados do pool inválidos: ${JSON.stringify(poolData)}`);
+      }
+      
       // Retornar o preço calculado dinamicamente
       console.log('💎 [PriceService] Preço KALE do pool:', poolData.kalePrice);
       return poolData.kalePrice;
@@ -174,6 +201,12 @@ export class PriceService {
       // Usar dados dinâmicos do pool KALE/USDC diretamente
       const kalePrice = await this.getKalePriceFromPool();
       console.log('💰 [PriceService] Preço KALE/USD obtido:', kalePrice);
+      
+      // Validar preço
+      if (!kalePrice || kalePrice <= 0) {
+        console.error('❌ [PriceService] Preço KALE/USD inválido:', kalePrice);
+        throw new Error(`Preço KALE/USD inválido: ${kalePrice}`);
+      }
       
       // O preço já está em USDC, que é aproximadamente igual a USD
       return kalePrice;

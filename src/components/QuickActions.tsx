@@ -28,7 +28,7 @@ const QuickActions: React.FC = () => {
       </Button>
 
       <Button
-        onClick={() => window.open("https://kalefarm.xyz", "_blank")}
+        onClick={() => window.open("https://kalefarm", "_blank")}
         variant="outline"
         className={quickActionButton}
       >

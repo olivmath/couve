@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useUser } from '@stackframe/stack';
 import StellarService, { StellarAccount } from './stellarService';
+import { useWalletStore } from '../stores/useWalletStore';
 
 export interface UseStellarAccountReturn {
   stellarAccount: StellarAccount | null;
@@ -16,6 +17,7 @@ export interface UseStellarAccountReturn {
  */
 export const useStellarAccount = (): UseStellarAccountReturn => {
   const user = useUser();
+  const { networkType } = useWalletStore();
   const [stellarAccount, setStellarAccount] = useState<StellarAccount | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +30,7 @@ export const useStellarAccount = (): UseStellarAccountReturn => {
     if (!stellarAccount) return;
     
     try {
-      const newBalance = await StellarService.getAccountBalance(stellarAccount.publicKey);
+      const newBalance = await StellarService.getAccountBalance(stellarAccount.publicKey, networkType);
       setBalance(newBalance);
     } catch (err) {
       console.error('Erro ao atualizar saldo:', err);
@@ -53,7 +55,7 @@ export const useStellarAccount = (): UseStellarAccountReturn => {
       
       if (!account) {
         // Se não existe no storage, criar nova conta
-        account = await StellarService.createAndFundAccount(user.id);
+        account = await StellarService.createAndFundAccount(user.id, networkType);
         
         if (!account) {
           throw new Error('Falha ao criar conta Stellar');
@@ -77,10 +79,10 @@ export const useStellarAccount = (): UseStellarAccountReturn => {
   };
 
   /**
-   * Carrega a conta quando o usuário faz login
+   * Carrega a conta quando o usuário faz login ou quando a rede muda
    */
   useEffect(() => {
-    if (user?.id && !stellarAccount) {
+    if (user?.id) {
       // Tentar carregar conta existente do storage
       const storedAccount = StellarService.loadAccountFromStorage(user.id);
       
@@ -93,6 +95,15 @@ export const useStellarAccount = (): UseStellarAccountReturn => {
       }
     }
   }, [user?.id]);
+
+  /**
+   * Atualiza o saldo quando a rede muda
+   */
+  useEffect(() => {
+    if (stellarAccount) {
+      refreshBalance();
+    }
+  }, [networkType, stellarAccount]);
 
   /**
    * Limpa a conta quando o usuário faz logout

@@ -4,10 +4,12 @@ import AddressQRCode from "../AddressQRCode";
 import AddressDisplay from "../AddressDisplay";
 import { useWalletStore } from "../../stores/useWalletStore";
 import { useStellarAccount } from "../../lib/useStellarAccount";
+import { getKaleConfig } from "../../lib/kaleConfig";
 
 export const DepositView = () => {
-  const { setCurrentView } = useWalletStore();
+  const { setCurrentView, networkType } = useWalletStore();
   const { stellarAccount } = useStellarAccount();
+  const kaleConfig = getKaleConfig(networkType);
 
   return (
     <div className="space-y-6">
@@ -31,7 +33,7 @@ export const DepositView = () => {
         <AddressQRCode 
           address={stellarAccount.publicKey}
           title="Your KALE Wallet Address"
-          explorerUrl={`https://stellar.expert/explorer/public/account/${stellarAccount.publicKey}`}
+          explorerUrl={`https://stellar.expert/explorer/${networkType === 'mainnet' ? 'public' : 'testnet'}/account/${stellarAccount.publicKey}`}
         />
       )}
       <div className="text-sm text-gray-600 space-y-1 bg-white p-4 rounded-lg border border-green-200">
@@ -41,12 +43,12 @@ export const DepositView = () => {
         <p className="flex items-center justify-between">
           <strong>Issuer:</strong>
           <AddressDisplay 
-            address="GBDVX4VELCDSQ54KQJYTNHXAHFLBCA77ZY2USQBM4CSHTTV7DME7KALE" 
-            explorerUrl="https://stellar.expert/explorer/public/account/GBDVX4VELCDSQ54KQJYTNHXAHFLBCA77ZY2USQBM4CSHTTV7DME7KALE"
+            address={kaleConfig.ISSUER} 
+            explorerUrl={`https://stellar.expert/explorer/${networkType === 'mainnet' ? 'public' : 'testnet'}/account/${kaleConfig.ISSUER}`}
           />
         </p>
         <p>
-          <strong>Network:</strong> Stellar Public Network
+          <strong>Network:</strong> Stellar {networkType === 'mainnet' ? 'Mainnet' : 'Testnet'}
         </p>
       </div>
     </div>

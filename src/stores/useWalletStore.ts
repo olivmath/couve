@@ -2,7 +2,9 @@ import { create } from 'zustand';
 import { parsePixPayload, isValidPixPayload, formatRecipientName, PixKeyType, detectPixKeyType } from '../lib/pixParser';
 import { StellarAccount } from '../lib/stellarService';
 import PriceService from '../lib/priceService';
-export type ViewType = 'home' | 'send' | 'deposit' | 'history' | 'success' | 'profile' | 'qr_scanner' | 'pix_key_input' | 'amount_input' | 'confirmation' | 'signin' | 'signup';
+export type ViewType = 'home' | 'send' | 'deposit' | 'history' | 'success' | 'profile' | 'debugger' | 'security' | 'settings' | 'qr_scanner' | 'pix_key_input' | 'amount_input' | 'confirmation' | 'signin' | 'signup';
+
+export type NetworkType = 'testnet' | 'mainnet';
 
 export interface Transaction {
   id: string;
@@ -34,6 +36,7 @@ interface WalletState {
   kaleToUSD: number;
   transactions: Transaction[];
   paymentData: PaymentData | null;
+  networkType: NetworkType;
   
   // Ações
   setPixAmount: (amount: string) => void;
@@ -58,6 +61,7 @@ interface WalletState {
   setQrCodeData: (data: string) => void;
   setCurrentView: (view: ViewType) => void;
   setPaymentData: (data: PaymentData | null) => void;
+  setNetworkType: (network: NetworkType) => void;
   updateKalePrice: () => Promise<void>;
 }
 
@@ -75,6 +79,7 @@ export const useWalletStore = create<WalletState>((set, get) => ({
   kaleToBRL: 0.42,
   kaleToUSD: 0.000385,
   paymentData: null,
+  networkType: 'testnet',
   transactions: [
     { id: '1', type: 'pix_sent', amount: -21.00, date: '2025-08-28', description: 'Mercado Orgânico Verde' },
     { id: '2', type: 'pix_sent', amount: -8.40, date: '2025-08-27', description: 'Feira do Produtor' },
@@ -92,6 +97,7 @@ export const useWalletStore = create<WalletState>((set, get) => ({
   setQrCodeData: (qrCodeData) => set({ qrCodeData }),
   setCurrentView: (currentView) => set({ currentView }),
   setPaymentData: (paymentData) => set({ paymentData }),
+  setNetworkType: (networkType) => set({ networkType }),
 
   
   // Atualizar preço do KALE em BRL e USD
@@ -106,11 +112,17 @@ export const useWalletStore = create<WalletState>((set, get) => ({
       
       console.log('💰 [WalletStore] Preços obtidos - BRL:', priceBRL, 'USD:', priceUSD);
       
-      set({ kaleToBRL: priceBRL, kaleToUSD: priceUSD });
-      
-      console.log('✅ [WalletStore] Preços atualizados no store');
+      // Validar se os preços são válidos antes de atualizar
+      if (typeof priceBRL === 'number' && priceBRL > 0 && 
+          typeof priceUSD === 'number' && priceUSD > 0) {
+        set({ kaleToBRL: priceBRL, kaleToUSD: priceUSD });
+        console.log('✅ [WalletStore] Preços atualizados no store');
+      } else {
+        console.warn('⚠️ [WalletStore] Preços inválidos recebidos, mantendo valores atuais:', { priceBRL, priceUSD });
+      }
     } catch (error) {
       console.error('❌ [WalletStore] Erro ao atualizar preço do KALE:', error);
+      // Não atualizar os preços em caso de erro, manter os valores atuais
     }
   },
   
