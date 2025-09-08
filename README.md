@@ -1,6 +1,6 @@
 # Couve - Stellar Wallet App
 
-Uma carteira moderna para a rede Stellar com integração PIX e eventos do Meridian 2025.
+A modern wallet for the Stellar network with PIX integration and Meridian 2025 events.
 
 ```mermaid
 flowchart LR
@@ -16,55 +16,55 @@ flowchart LR
     style E fill:#10b981
 ```
 
-## 🚀 Funcionalidades
+## 🚀 Features
 
-- 💳 Carteira Stellar integrada
-- 🇧🇷 Pagamentos PIX via Stellar
-- 🎉 Carrossel de eventos do Meridian 2025 com API do Luma
-- 📱 Interface mobile-first responsiva
-- 🌟 Design moderno com Tailwind CSS
+- 💳 Integrated Stellar wallet
+- 🇧🇷 PIX payments via Stellar
+- 🎉 Meridian 2025 events carousel with Luma API
+- 📱 Mobile-first responsive interface
+- 🌟 Modern design with Tailwind CSS
 
-## 🛠️ Configuração
+## 🛠️ Setup
 
-### Pré-requisitos
+### Prerequisites
 
 - Node.js 18+
-- npm ou yarn
+- npm or yarn
 
-### Instalação
+### Installation
 
 ```bash
-# Clone o repositório
+# Clone the repository
 git clone <repository-url>
 cd couve
 
-# Instale as dependências
+# Install dependencies
 npm install
 
-# Configure as variáveis de ambiente
+# Configure environment variables
 cp .env.example .env
 ```
 
-### Configuração da API do Luma (Opcional)
+### Luma API Configuration (Optional)
 
-Para integrar eventos reais do Luma:
+To integrate real Luma events:
 
-1. Acesse [Luma Dashboard](https://lu.ma/dashboard)
-2. Vá em Settings → API Keys
-3. Gere uma nova API key
-4. Adicione no arquivo `.env`:
+1. Access [Luma Dashboard](https://lu.ma/dashboard)
+2. Go to Settings → API Keys
+3. Generate a new API key
+4. Add to the `.env` file:
 
 ```env
-VITE_LUMA_API_KEY=sua_api_key_aqui
+VITE_LUMA_API_KEY=your_api_key_here
 ```
 
-### Executar o projeto
+### Run the project
 
 ```bash
 npm run dev
 ```
 
-## 📱 Fluxos Principais
+## 📱 Main Flows
 
 
 ### FLOW ONBOARDING
@@ -105,14 +105,14 @@ sequenceDiagram
     Couve-->>User: Payment confirmed
 ```
 
-## 🎨 Componentes Principais
+## 🎨 Main Components
 
-- **MeridianEventsCarousel**: Carrossel interativo de eventos com integração API do Luma
-- **WalletStore**: Gerenciamento de estado da carteira Stellar
-- **BalanceCard**: Exibição de saldos e conversões
-- **QuickActions**: Ações rápidas para pagamentos PIX
+- **MeridianEventsCarousel**: Interactive events carousel with Luma API integration
+- **WalletStore**: Stellar wallet state management
+- **BalanceCard**: Balance display and conversions
+- **QuickActions**: Quick actions for PIX payments
 
-## 🌐 APIs Integradas
+## 🌐 Integrated APIs
 
 ```mermaid
 graph TB
@@ -155,17 +155,17 @@ graph TB
     style G fill:#8b5cf6
 ```
 
-### APIs Detalhadas
+### Detailed APIs
 
-- **Luma API**: Eventos do Meridian 2025
-- **Stellar Horizon**: Rede Stellar
-- **Transfero**: Pagamentos PIX
-- **Soroswap**: Swaps de tokens na Stellar
+- **Luma API**: Meridian 2025 events
+- **Stellar Horizon**: Stellar network
+- **Transfero**: PIX payments
+- **Soroswap**: Token swaps on Stellar
 
-## 🤝 Contribuindo
+## 🤝 Contributing
 
-1. Fork o projeto
-2. Crie uma branch para sua feature
-3. Commit suas mudanças
-4. Push para a branch
-5. Abra um Pull Request
+1. Fork the project
+2. Create a branch for your feature
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request
