@@ -1,6 +1,6 @@
 # CouvePIX - Official Kale Wallet for Meridian 
 
-A modern wallet for the Stellar network with PIX integration and Meridian 2025 events.
+The Kale wallet with PIX integration for the Meridian 2025 event.
 
 ```mermaid
 flowchart LR
