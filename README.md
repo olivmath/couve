@@ -1,4 +1,4 @@
-# Couve - Stellar Wallet App
+# CouvePIX - Official Kale Wallet for Meridian 
 
 A modern wallet for the Stellar network with PIX integration and Meridian 2025 events.
 
