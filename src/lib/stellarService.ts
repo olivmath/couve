@@ -9,7 +9,7 @@ export interface StellarAccount {
 
 export class StellarService {
   /**
-   * Retorna o servidor Horizon baseado na rede selecionada
+   * Returns the Horizon server based on the selected network
    */
   static getHorizonServer(networkType: NetworkType): Horizon.Server {
     return networkType === 'mainnet' 
@@ -18,21 +18,21 @@ export class StellarService {
   }
 
   /**
-   * Retorna o network passphrase baseado na rede selecionada
+   * Returns the network passphrase based on the selected network
    */
   static getNetworkPassphrase(networkType: NetworkType): string {
     return networkType === 'mainnet' ? Networks.PUBLIC : Networks.TESTNET;
   }
   /**
-   * Gera um keypair Stellar determinístico baseado no ID do usuário (versão async)
-   * Isso garante que o mesmo usuário sempre tenha a mesma conta
+   * Generates a deterministic Stellar keypair based on the user ID (async version)
+   * This ensures that the same user always has the same account
    */
   static async generateKeypairFromUserId(userId: string): Promise<StellarAccount> {
-    // Criar uma seed determinística baseada no userId
+    // Create a deterministic seed based on userId
     const encoder = new TextEncoder();
     const data = encoder.encode(`stellar-seed-${userId}`);
     
-    // Usar crypto.subtle para gerar uma seed de 32 bytes
+    // Use crypto.subtle to generate a 32-byte seed
     const hashBuffer = await crypto.subtle.digest('SHA-256', data);
     const seed = new Uint8Array(hashBuffer);
     const keypair = Keypair.fromRawEd25519Seed(seed);
@@ -45,11 +45,11 @@ export class StellarService {
   }
 
   /**
-   * Versão síncrona usando uma abordagem mais simples
+   * Synchronous version using a simpler approach
    */
   static generateKeypairFromUserIdSync(userId: string): StellarAccount {
-    // Criar uma seed simples baseada no userId
-    // Em produção, considere usar uma biblioteca de hash mais robusta
+    // Create a simple seed based on userId
+    // In production, consider using a more robust hash library
     let hash = 0;
     for (let i = 0; i < userId.length; i++) {
       const char = userId.charCodeAt(i);
@@ -57,7 +57,7 @@ export class StellarService {
       hash = hash & hash; // Convert to 32bit integer
     }
     
-    // Expandir o hash para 32 bytes
+    // Expand the hash to 32 bytes
     const seed = new Uint8Array(32);
     const hashStr = Math.abs(hash).toString().padStart(10, '0') + userId;
     
@@ -75,7 +75,7 @@ export class StellarService {
   }
 
   /**
-   * Verifica se uma conta existe na rede Stellar
+   * Checks if an account exists on the Stellar network
    */
   static async accountExists(publicKey: string, networkType: NetworkType = 'testnet'): Promise<boolean> {
     try {
@@ -91,12 +91,12 @@ export class StellarService {
   }
 
   /**
-   * Solicita faucet para uma conta na testnet
-   * Só funciona na testnet
+   * Requests faucet for an account on testnet
+   * Only works on testnet
    */
   static async requestFaucet(publicKey: string, networkType: NetworkType = 'testnet'): Promise<boolean> {
     if (networkType === 'mainnet') {
-      console.error('Faucet não disponível na mainnet');
+      console.error('Faucet not available on mainnet');
       return false;
     }
 
@@ -106,20 +106,20 @@ export class StellarService {
       );
       
       if (response.ok) {
-        console.log('Faucet solicitado com sucesso para:', publicKey);
+        console.log('Faucet requested successfully for:', publicKey);
         return true;
       } else {
-        console.error('Erro ao solicitar faucet:', response.status, response.statusText);
+        console.error('Error requesting faucet:', response.status, response.statusText);
         return false;
       }
     } catch (error) {
-      console.error('Erro ao solicitar faucet:', error);
+      console.error('Error requesting faucet:', error);
       return false;
     }
   }
 
   /**
-   * Obtém o saldo de uma conta
+   * Gets the balance of an account
    */
   static async getAccountBalance(publicKey: string, networkType: NetworkType = 'testnet'): Promise<number> {
     try {
@@ -130,61 +130,61 @@ export class StellarService {
       );
       return xlmBalance ? parseFloat(xlmBalance.balance) : 0;
     } catch (error) {
-      console.error('Erro ao obter saldo:', error);
+      console.error('Error getting balance:', error);
       return 0;
     }
   }
 
   /**
-   * Cria e financia uma nova conta Stellar
-   * Retorna true se a conta foi criada com sucesso ou já existia
+   * Creates and funds a new Stellar account
+   * Returns true if the account was created successfully or already existed
    */
   static async createAndFundAccount(userId: string, networkType: NetworkType = 'testnet'): Promise<StellarAccount | null> {
     try {
-      // Gerar keypair determinístico
+      // Generate deterministic keypair
       const stellarAccount = this.generateKeypairFromUserIdSync(userId);
       
-      // Verificar se a conta já existe
+      // Check if account already exists
       const exists = await this.accountExists(stellarAccount.publicKey, networkType);
       
       if (!exists) {
         if (networkType === 'mainnet') {
-          console.error('Não é possível criar conta automaticamente na mainnet. Conta deve ser financiada manualmente.');
+          console.error('Cannot create account automatically on mainnet. Account must be funded manually.');
           return null;
         }
         
-        // Solicitar faucet para criar e financiar a conta (apenas testnet)
+        // Request faucet to create and fund the account (testnet only)
         const faucetSuccess = await this.requestFaucet(stellarAccount.publicKey, networkType);
         
         if (!faucetSuccess) {
-          console.error('Falha ao solicitar faucet');
+          console.error('Failed to request faucet');
           return null;
         }
         
-        // Aguardar um pouco para a transação ser processada
+        // Wait a bit for the transaction to be processed
         await new Promise(resolve => setTimeout(resolve, 3000));
         
-        // Verificar se a conta foi criada
+        // Check if the account was created
         const accountCreated = await this.accountExists(stellarAccount.publicKey, networkType);
         if (!accountCreated) {
-          console.error('Conta não foi criada após faucet');
+          console.error('Account was not created after faucet');
           return null;
         }
         
-        console.log('Nova conta Stellar criada:', stellarAccount.publicKey);
+        console.log('New Stellar account created:', stellarAccount.publicKey);
       } else {
-        console.log('Conta Stellar já existe:', stellarAccount.publicKey);
+        console.log('Stellar account already exists:', stellarAccount.publicKey);
       }
       
       return stellarAccount;
     } catch (error) {
-      console.error('Erro ao criar conta Stellar:', error);
+      console.error('Error creating Stellar account:', error);
       return null;
     }
   }
 
   /**
-   * Salva os dados da conta no localStorage
+   * Saves account data to localStorage
    */
   static saveAccountToStorage(userId: string, account: StellarAccount): void {
     const accountData = {
@@ -198,7 +198,7 @@ export class StellarService {
   }
 
   /**
-   * Recupera os dados da conta do localStorage
+   * Retrieves account data from localStorage
    */
   static loadAccountFromStorage(userId: string): StellarAccount | null {
     try {
@@ -214,13 +214,13 @@ export class StellarService {
         keypair
       };
     } catch (error) {
-      console.error('Erro ao carregar conta do storage:', error);
+      console.error('Error loading account from storage:', error);
       return null;
     }
   }
 
   /**
-   * Remove os dados da conta do localStorage
+   * Removes account data from localStorage
    */
   static removeAccountFromStorage(userId: string): void {
     localStorage.removeItem(`stellar-account-${userId}`);

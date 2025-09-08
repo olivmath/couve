@@ -13,7 +13,7 @@ const PriceDebugger: React.FC = () => {
     const results: any = {};
     
     try {
-      console.log('🔍 [PriceDebugger] Iniciando testes de preços...');
+      console.log('🔍 [PriceDebugger] Starting price tests...');
       
       // Testar conectividade com a API do Stellar Expert
       console.log('🌐 [PriceDebugger] Testando conectividade com Stellar Expert API...');
@@ -40,13 +40,13 @@ const PriceDebugger: React.FC = () => {
       console.log('🏊 [PriceDebugger] Testando getKalePriceFromPool...');
       const kalePriceFromPool = await PriceService.getKalePriceFromPool();
       results.kalePriceFromPool = kalePriceFromPool;
-      console.log('✅ [PriceDebugger] Preço do pool:', kalePriceFromPool);
+      console.log('✅ [PriceDebugger] Pool price:', kalePriceFromPool);
       
       // Testar PriceService.getKalePriceUSD
       console.log('💵 [PriceDebugger] Testando getKalePriceUSD...');
       const kalePriceUSD = await PriceService.getKalePriceUSD();
       results.kalePriceUSD = kalePriceUSD;
-      console.log('✅ [PriceDebugger] Preço USD:', kalePriceUSD);
+      console.log('✅ [PriceDebugger] USD price:', kalePriceUSD);
       
       // Testar PriceService.getUsdToBrlPrice
       console.log('🇧🇷 [PriceDebugger] Testando getUsdToBrlPrice...');
@@ -58,9 +58,9 @@ const PriceDebugger: React.FC = () => {
       console.log('🥬 [PriceDebugger] Testando getKalePrice (BRL)...');
       const kalePriceBRL = await PriceService.getKalePrice();
       results.kalePriceBRL = kalePriceBRL;
-      console.log('✅ [PriceDebugger] Preço BRL:', kalePriceBRL);
+      console.log('✅ [PriceDebugger] BRL price:', kalePriceBRL);
       
-      // Calcular preços manualmente para comparação
+      // Calculate prices manually for comparison
       results.manualCalculation = {
         kaleUSD: kalePriceFromPool,
         usdBRL: usdToBrlPrice,
@@ -80,13 +80,13 @@ const PriceDebugger: React.FC = () => {
 
   const testUpdateKalePrice = async () => {
     console.log('🔄 [PriceDebugger] Testando updateKalePrice...');
-    console.log('📊 [PriceDebugger] Preços antes:', { kaleToBRL, kaleToUSD });
+    console.log('📊 [PriceDebugger] Prices before:', { kaleToBRL, kaleToUSD });
     
     await updateKalePrice();
     
     // Aguardar um pouco para o estado atualizar
     setTimeout(() => {
-      console.log('📊 [PriceDebugger] Preços depois:', { kaleToBRL, kaleToUSD });
+      console.log('📊 [PriceDebugger] Prices after:', { kaleToBRL, kaleToUSD });
     }, 100);
   };
 

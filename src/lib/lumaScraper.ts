@@ -1,4 +1,4 @@
-// Serviço para fazer scraping dos eventos do Luma
+// Service for scraping Luma events
 
 interface LumaEvent {
   id: string;
@@ -17,29 +17,29 @@ export class LumaScraper {
   private static cachedEvents: LumaEvent[] | null = null;
   
   /**
-   * Busca eventos do Meridian 2025 via scraping
+   * Fetches Meridian 2025 events via scraping
    */
   static async getEvents(): Promise<LumaEvent[]> {
     try {
-      // Tentar usar proxy CORS para fazer scraping
+      // Try using CORS proxy for scraping
       const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(this.EVENTS_URL)}`;
       const response = await fetch(proxyUrl);
       
       if (!response.ok) {
-        throw new Error('Falha ao buscar eventos');
+        throw new Error('Failed to fetch events');
       }
       
       const data = await response.json();
       const html = data.contents;
       
-      // Fazer parsing do HTML para extrair eventos
+      // Parse HTML to extract events
       const events = this.parseEventsFromHTML(html);
       this.cachedEvents = events;
       return events;
     } catch (error) {
-      console.error('Erro ao buscar eventos:', error);
+      console.error('Error fetching events:', error);
       
-      // Retornar dados estáticos baseados na última consulta conhecida
+      // Return static data based on last known query
       const fallbackEvents = this.getFallbackEvents();
       this.cachedEvents = fallbackEvents;
       return fallbackEvents;
@@ -47,30 +47,30 @@ export class LumaScraper {
   }
 
   /**
-   * Retorna eventos progressivamente, um por vez
+   * Returns events progressively, one at a time
    */
   static async* getEventsProgressively(): AsyncGenerator<LumaEvent, void, unknown> {
     try {
-      // Se já temos eventos em cache, usar eles
+      // If we already have cached events, use them
       if (this.cachedEvents) {
         for (const event of this.cachedEvents) {
           yield event;
-          // Pequeno delay para simular carregamento progressivo
+          // Small delay to simulate progressive loading
           await new Promise(resolve => setTimeout(resolve, 500));
         }
         return;
       }
 
-      // Caso contrário, buscar eventos e retornar progressivamente
+      // Otherwise, fetch events and return progressively
       const events = await this.getEvents();
       for (const event of events) {
         yield event;
-        // Pequeno delay para simular carregamento progressivo
+        // Small delay to simulate progressive loading
         await new Promise(resolve => setTimeout(resolve, 500));
       }
     } catch (error) {
-      console.error('Erro ao buscar eventos progressivamente:', error);
-      // Em caso de erro, retornar eventos fallback progressivamente
+      console.error('Error fetching events progressively:', error);
+      // In case of error, return fallback events progressively
       const fallbackEvents = this.getFallbackEvents();
       for (const event of fallbackEvents) {
         yield event;
@@ -80,14 +80,14 @@ export class LumaScraper {
   }
   
   /**
-   * Faz parsing dos eventos do HTML
+   * Parses events from HTML
    */
   private static parseEventsFromHTML(html: string): LumaEvent[] {
     try {
       const events: LumaEvent[] = [];
       
-      // Usar regex para extrair informações dos eventos
-      // Padrão para encontrar eventos no HTML
+      // Use regex to extract event information
+      // Pattern to find events in HTML
       const eventPattern = /<div[^>]*class="[^"]*event[^"]*"[^>]*>([\s\S]*?)<\/div>/gi;
       const titlePattern = /<h[1-6][^>]*>([^<]+)<\/h[1-6]>/i;
       const datePattern = /(\d{1,2}\s+de\s+\w+|\w+\s+\d{1,2})[^\d]*([\d:]+)/i;
@@ -109,9 +109,9 @@ export class LumaScraper {
           const event: LumaEvent = {
             id: `luma-${eventId++}`,
             title: titleMatch[1].trim(),
-            date: dateMatch ? `${dateMatch[1]} ${dateMatch[2] || ''}`.trim() : 'Data não informada',
+            date: dateMatch ? `${dateMatch[1]} ${dateMatch[2] || ''}`.trim() : 'Date not informed',
             location: locationMatch ? locationMatch[2].trim() : 'Rio de Janeiro, RJ',
-            description: `Evento do Meridian 2025 - ${titleMatch[1].trim()}`,
+            description: `Meridian 2025 Event - ${titleMatch[1].trim()}`,
             url: this.EVENTS_URL,
             attendees: attendeesMatch ? parseInt(attendeesMatch[1]) : undefined,
             category: 'Meridian 2025',
@@ -122,25 +122,25 @@ export class LumaScraper {
         }
       }
       
-      // Se não encontrou eventos via regex, tentar uma abordagem mais simples
+      // If no events found via regex, try a simpler approach
       if (events.length === 0) {
         return this.parseEventsSimple(html);
       }
       
       return events;
     } catch (error) {
-      console.error('Erro ao fazer parsing dos eventos:', error);
+      console.error('Error parsing events:', error);
       return this.getFallbackEvents();
     }
   }
   
   /**
-   * Parsing mais simples baseado em padrões de texto
+   * Simpler parsing based on text patterns
    */
   private static parseEventsSimple(html: string): LumaEvent[] {
     const events: LumaEvent[] = [];
     
-    // Procurar por padrões específicos conhecidos dos dados de exemplo
+    // Look for specific known patterns from example data
     const eventPatterns = [
       {
         title: "Blendy's Night Out",
@@ -149,22 +149,22 @@ export class LumaScraper {
       },
       {
         title: "A Normal Hike and Brazilian Cuisine at Meridian",
-        date: "16 de set.terça-feira10:00",
+        date: "16 Sep.Tuesday10:00",
         location: "Christ the Redeemer"
       },
       {
         title: "Praia Volleyball and Caipirinhas by Runtime Verification",
-        date: "16 de set.terça-feira14:30",
-        location: "Barraca de Praia Equipe Malhadão 22 - leme Rj"
+        date: "16 Sep.Tuesday14:30",
+        location: "Beach Tent Team Malhado 22 - Leme RJ"
       },
       {
         title: "Sunset with Stellar Ambassadors",
-        date: "16 de set.terça-feira17:00",
+        date: "16 Sep.Tuesday17:00",
         location: "Via 11"
       },
       {
         title: "Stellar Sunset: DeFi, Wallets, Payments & Tokenization",
-        date: "16 de set.terça-feira18:00",
+        date: "16 Sep.Tuesday18:00",
         location: "Rio de Janeiro, Rio de Janeiro"
       },
       {
@@ -175,16 +175,16 @@ export class LumaScraper {
     ];
     
     eventPatterns.forEach((pattern, index) => {
-      // Verificar se o padrão existe no HTML
+      // Check if pattern exists in HTML
       if (html.toLowerCase().includes(pattern.title.toLowerCase().substring(0, 10))) {
         const event: LumaEvent = {
           id: `luma-${index + 1}`,
           title: pattern.title,
           date: this.formatDate(pattern.date),
           location: pattern.location,
-          description: `Evento do Meridian 2025 - ${pattern.title}`,
+          description: `Meridian 2025 Event - ${pattern.title}`,
           url: this.EVENTS_URL,
-          attendees: Math.floor(Math.random() * 200) + 50, // Número aleatório para demo
+          attendees: Math.floor(Math.random() * 200) + 50, // Random number for demo
           category: 'Meridian 2025',
           image: '/api/placeholder/400/200'
         };
@@ -197,11 +197,11 @@ export class LumaScraper {
   }
   
   /**
-   * Formata a data para um formato mais legível
+   * Formats date to a more readable format
    */
   private static formatDate(dateStr: string): string {
     try {
-      // Converter formato "15 de set.segunda-feira19:30" para "Sep 15, 7:30 PM"
+      // Convert format "15 de set.segunda-feira19:30" to "Sep 15, 7:30 PM"
       const dayMatch = dateStr.match(/(\d{1,2})/);
       const monthMatch = dateStr.match(/de\s+(\w+)/);
       const timeMatch = dateStr.match(/(\d{1,2}):(\d{2})/);
@@ -224,7 +224,7 @@ export class LumaScraper {
   }
   
   /**
-   * Traduz mês de português para inglês abreviado
+   * Translates month from Portuguese to abbreviated English
    */
   private static translateMonth(month: string): string {
     const months: { [key: string]: string } = {
@@ -237,7 +237,7 @@ export class LumaScraper {
   }
   
   /**
-   * Retorna eventos estáticos como fallback
+   * Returns static events as fallback
    */
   private static getFallbackEvents(): LumaEvent[] {
     return [
@@ -267,7 +267,7 @@ export class LumaScraper {
         id: '3',
         title: 'Praia Volleyball and Caipirinhas by Runtime Verification 🏐☀️🍹',
         date: 'Sep 16, 2:30 PM',
-        location: 'Barraca de Praia Equipe Malhadão 22 - leme Rj',
+        location: 'Beach Tent Team Malhado 22 - Leme RJ',
         description: 'Beach volleyball and refreshing caipirinhas with the RV team.',
         url: this.EVENTS_URL,
         attendees: 115,

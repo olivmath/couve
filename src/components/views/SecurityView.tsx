@@ -44,17 +44,17 @@ const SecurityView: React.FC = () => {
         </Button>
         <h2 className="text-xl font-bold text-gray-800 flex items-center">
           <Shield className="h-6 w-6 text-green-600 mr-2" />
-          Segurança
+          Security
         </h2>
         <div></div>
       </div>
 
       {/* Security Warning */}
       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <h3 className="font-semibold text-red-800 mb-2">⚠️ Informações Sensíveis</h3>
+        <h3 className="font-semibold text-red-800 mb-2">⚠️ Sensitive Information</h3>
         <p className="text-sm text-red-700">
-          Suas chaves são extremamente importantes. Nunca compartilhe sua chave privada com ninguém.
-          Qualquer pessoa com acesso à sua chave privada pode controlar seus fundos.
+          Your keys are extremely important. Never share your private key with anyone.
+          Anyone with access to your private key can control your funds.
         </p>
       </div>
 
@@ -66,7 +66,7 @@ const SecurityView: React.FC = () => {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-800 flex items-center">
                   <ExternalLink className="h-5 w-5 text-green-600 mr-2" />
-                  Endereço Público
+                  Public Address
                 </h3>
                 <div className="flex space-x-2">
                   <Button
@@ -82,7 +82,7 @@ const SecurityView: React.FC = () => {
               </div>
               
               <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-sm text-gray-600 mb-2">Endereço da carteira Stellar:</p>
+                <p className="text-sm text-gray-600 mb-2">Stellar wallet address:</p>
                 <div className="font-mono text-sm bg-white p-3 rounded border break-all overflow-hidden">
                   <span className="break-all overflow-wrap-anywhere">{stellarAccount.publicKey}</span>
                 </div>
@@ -97,8 +97,8 @@ const SecurityView: React.FC = () => {
               </div>
               
               <div className="mt-4 text-xs text-gray-500">
-                <p>• Use este endereço para receber KALE e outros ativos Stellar</p>
-                <p>• É seguro compartilhar seu endereço público</p>
+                <p>• Use this address to receive KALE and other Stellar assets</p>
+                <p>• It's safe to share your public address</p>
                 <p>• Clique no link para ver no Stellar Expert</p>
               </div>
             </CardContent>
@@ -164,10 +164,10 @@ const SecurityView: React.FC = () => {
               </div>
               
               <div className="mt-4 text-xs text-red-600 space-y-1">
-                <p>• <strong>CRÍTICO:</strong> Qualquer pessoa com esta chave controla seus fundos</p>
+                <p>• <strong>CRITICAL:</strong> Anyone with this key controls your funds</p>
                 <p>• <strong>BACKUP:</strong> Anote em local seguro, offline</p>
-                <p>• <strong>SEGURANÇA:</strong> Nunca digite em sites suspeitos</p>
-                <p>• <strong>PERDA:</strong> Se perder esta chave, perderá acesso aos fundos</p>
+                <p>• <strong>SECURITY:</strong> Never enter on suspicious websites</p>
+                <p>• <strong>LOSS:</strong> If you lose this key, you'll lose access to funds</p>
               </div>
             </CardContent>
           </Card>

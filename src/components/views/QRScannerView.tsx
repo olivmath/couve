@@ -42,7 +42,7 @@ export default function QRScannerView() {
         if (errorMessage.includes('Permission denied')) {
           return 'Camera permission denied. To enable on iPhone: Settings > Safari > Camera > Allow';
         }
-        if (errorMessage.includes('not supported') || errorMessage.includes('não suportada')) {
+        if (errorMessage.includes('not supported') || errorMessage.includes('not supported')) {
            return 'Camera API not supported in this browser. Use updated Safari, Chrome or Firefox.';
          }
          return `Error accessing camera: ${errorMessage || 'Unknown error'}. Check permissions and try again.`;
@@ -54,7 +54,7 @@ export default function QRScannerView() {
       setError(null);
       setIsScanning(true);
       
-      // Primeiro, verificar se a API está disponível
+      // First, check if the API is available
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         throw new Error('Camera API not supported in this browser');
       }
@@ -77,7 +77,7 @@ export default function QRScannerView() {
       console.error('Error accessing camera:', err);
       setHasPermission(false);
       
-      // Se for erro de configuração, tentar com configurações mais básicas
+      // If it's a configuration error, try with more basic settings
       if (err instanceof Error && err.name === 'OverconstrainedError') {
         try {
           const basicStream = await navigator.mediaDevices.getUserMedia({
@@ -165,7 +165,7 @@ export default function QRScannerView() {
                 <div className="bg-red-500 text-white p-4 rounded-lg text-left space-y-3">
                   <p className="font-semibold">{error}</p>
                   
-                  {(error.includes('Permissão') || error.includes('Permission')) && (
+                  {(error.includes('Permission') || error.includes('Permission')) && (
                     <div className="bg-red-600 p-3 rounded text-sm space-y-2">
                       <p className="font-semibold">📱 How to enable camera:</p>
                       <div className="space-y-1">
@@ -196,7 +196,7 @@ export default function QRScannerView() {
                      </div>
                    )}
                    
-                   {(error.includes('não suportada') || error.includes('not supported')) && (
+                   {(error.includes('not supported') || error.includes('not supported')) && (
                      <div className="bg-red-600 p-3 rounded text-sm space-y-2">
                        <p>🌐 <strong>Incompatible browser:</strong></p>
                        <div className="space-y-1">

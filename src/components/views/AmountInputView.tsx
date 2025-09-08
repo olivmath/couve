@@ -19,19 +19,19 @@ export default function AmountInputView() {
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
     
-    // Remove caracteres não numéricos exceto ponto e vírgula
+    // Remove non-numeric characters except dot and comma
     value = value.replace(/[^0-9.,]/g, '');
     
-    // Substitui vírgula por ponto
+    // Replace comma with dot
     value = value.replace(',', '.');
     
-    // Permite apenas um ponto decimal
+    // Allow only one decimal point
     const parts = value.split('.');
     if (parts.length > 2) {
       value = parts[0] + '.' + parts.slice(1).join('');
     }
     
-    // Limita a 2 casas decimais
+    // Limit to 2 decimal places
     if (parts[1] && parts[1].length > 2) {
       value = parts[0] + '.' + parts[1].substring(0, 2);
     }

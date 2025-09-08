@@ -19,9 +19,9 @@ const SettingsView: React.FC = () => {
         name: 'Stellar Mainnet',
         server: 'horizon.stellar.org',
         warnings: [
-          '• Esta é a rede principal - fundos têm valor real',
-          '• Transações são permanentes e irreversíveis',
-          '• Use com cuidado em produção'
+          '• This is the main network - funds have real value',
+          '• Transactions are permanent and irreversible',
+          '• Use with caution in production'
         ],
         color: 'blue'
       };
@@ -30,9 +30,9 @@ const SettingsView: React.FC = () => {
         name: 'Stellar Testnet',
         server: 'horizon-testnet.stellar.org',
         warnings: [
-          '• Esta é a rede de teste - fundos não têm valor real',
-          '• Use para desenvolvimento e testes',
-          '• Fundos podem ser obtidos gratuitamente via faucet'
+          '• This is the test network - funds have no real value',
+          '• Use for development and testing',
+          '• Funds can be obtained for free via faucet'
         ],
         color: 'orange'
       };
@@ -51,11 +51,11 @@ const SettingsView: React.FC = () => {
           className="text-green-600 font-medium flex items-center p-0"
         >
           <ArrowLeft className="h-4 w-4 mr-1" />
-          Voltar
+          Back
         </Button>
         <h2 className="text-xl font-bold text-gray-800 flex items-center">
           <Globe className="h-6 w-6 text-green-600 mr-2" />
-          Configurações
+          Settings
         </h2>
         <div></div>
       </div>
@@ -66,14 +66,14 @@ const SettingsView: React.FC = () => {
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-blue-800 flex items-center">
               <Globe className="h-5 w-5 mr-2" />
-              Configuração de Rede
+              Network Configuration
             </h3>
           </div>
 
           {/* Network Selector */}
           <div className="mb-6">
             <label className="text-sm font-medium text-gray-600 mb-2 block">
-              Selecionar Rede:
+              Select Network:
             </label>
             <div className="flex space-x-2">
               <Button
@@ -102,7 +102,7 @@ const SettingsView: React.FC = () => {
           {/* Network Information */}
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-medium text-gray-600">Rede Ativa:</span>
+              <span className="text-sm font-medium text-gray-600">Active Network:</span>
               <span className={`text-sm font-semibold text-${networkInfo.color}-600`}>
                 {networkInfo.name}
               </span>

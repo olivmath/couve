@@ -1,12 +1,12 @@
 /**
- * Parser para códigos PIX copia e cola
- * Baseado na documentação oficial do PIX
+ * Parser for PIX copy and paste codes
+ * Based on official PIX documentation
  */
 
 export type PixKeyType = 'CPF' | 'CNPJ' | 'EMAIL' | 'PHONE' | 'UUID';
 
 /**
- * Detecta o tipo de uma chave PIX
+ * Detects the type of a PIX key
  */
 export function detectPixKeyType(key: string): PixKeyType {
   if (!key) return 'UUID';
@@ -32,16 +32,16 @@ export interface PixData {
 }
 
 /**
- * Extrai dados de um payload PIX
- * @param payload - String do código PIX copia e cola
- * @returns Dados extraídos do PIX ou null se inválido
+ * Extracts data from a PIX payload
+ * @param payload - PIX copy and paste code string
+ * @returns Extracted PIX data or null if invalid
  */
 export function parsePixPayload(payload: string): PixData | null {
   try {
-    // Remove espaços e quebras de linha
+    // Remove spaces and line breaks
     const cleanPayload = payload.replace(/\s/g, '');
     
-    // Verifica se começa com o formato correto (00020126...)
+    // Check if it starts with correct format (00020126...)
     if (!cleanPayload.startsWith('000201')) {
       return null;
     }
@@ -49,7 +49,7 @@ export function parsePixPayload(payload: string): PixData | null {
     let position = 0;
     const data: Partial<PixData> = {};
 
-    while (position < cleanPayload.length - 4) { // -4 para o CRC no final
+    while (position < cleanPayload.length - 4) { // -4 for CRC at the end
       const id = cleanPayload.substr(position, 2);
       const length = parseInt(cleanPayload.substr(position + 2, 2), 10);
       const value = cleanPayload.substr(position + 4, length);
@@ -58,7 +58,7 @@ export function parsePixPayload(payload: string): PixData | null {
 
       switch (id) {
         case '26': // Merchant Account Information
-          // Dentro do campo 26, procurar pela chave PIX
+          // Inside field 26, look for PIX key
           const pixKeyData = parsePixKey(value);
           if (pixKeyData) {
             data.pixKey = pixKeyData;
@@ -68,9 +68,9 @@ export function parsePixPayload(payload: string): PixData | null {
           data.amount = value;
           break;
         case '59': // Merchant Name
-          // Remover CPF/CNPJ do início se presente
+          // Remove CPF/CNPJ from beginning if present
           let cleanName = value.replace(/^\d+\.\d+\.\d+/, '').replace(/^\d+\.\d+\.\d+\/\d+-\d+/, '');
-          // Remover indicadores de cidade no final (600X)
+          // Remove city indicators at the end (600X)
           cleanName = cleanName.replace(/600\d*$/, '');
           data.recipientName = cleanName.trim();
           break;
@@ -78,7 +78,7 @@ export function parsePixPayload(payload: string): PixData | null {
           data.recipientCity = value;
           break;
         case '62': // Additional Data Field Template
-          // Pode conter descrição do pagamento
+          // May contain payment description
           const description = parseAdditionalData(value);
           if (description) {
             data.description = description;
@@ -87,7 +87,7 @@ export function parsePixPayload(payload: string): PixData | null {
       }
     }
 
-    // Verifica se temos os dados essenciais
+    // Check if we have essential data
     if (data.pixKey && data.amount && data.recipientName) {
       return {
         pixKey: data.pixKey,
@@ -101,13 +101,13 @@ export function parsePixPayload(payload: string): PixData | null {
 
     return null;
   } catch (error) {
-    console.error('Erro ao fazer parsing do PIX:', error);
+    console.error('Error parsing PIX:', error);
     return null;
   }
 }
 
 /**
- * Extrai a chave PIX do campo Merchant Account Information (26)
+ * Extracts PIX key from Merchant Account Information field (26)
  */
 function parsePixKey(merchantInfo: string): string | null {
   let position = 0;
@@ -119,7 +119,7 @@ function parsePixKey(merchantInfo: string): string | null {
     
     position += 4 + length;
 
-    // Campo 01 dentro do 26 contém a chave PIX
+    // Field 01 inside 26 contains the PIX key
     if (id === '01') {
       return value;
     }
@@ -129,7 +129,7 @@ function parsePixKey(merchantInfo: string): string | null {
 }
 
 /**
- * Extrai dados adicionais do campo 62
+ * Extracts additional data from field 62
  */
 function parseAdditionalData(additionalData: string): string | null {
   let position = 0;
@@ -141,7 +141,7 @@ function parseAdditionalData(additionalData: string): string | null {
     
     position += 4 + length;
 
-    // Campo 05 dentro do 62 geralmente contém a descrição
+    // Field 05 inside 62 usually contains the description
     if (id === '05') {
       return value;
     }
@@ -151,35 +151,35 @@ function parseAdditionalData(additionalData: string): string | null {
 }
 
 /**
- * Valida se uma string é um payload PIX válido
+ * Validates if a string is a valid PIX payload
  */
 export function isValidPixPayload(payload: string): boolean {
   const cleanPayload = payload.replace(/\s/g, '');
   
-  // Verifica formato básico
+  // Check basic format
   if (!cleanPayload.startsWith('000201')) {
     return false;
   }
   
-  // Verifica se tem pelo menos o tamanho mínimo
+  // Check if it has at least minimum size
   if (cleanPayload.length < 50) {
     return false;
   }
   
-  // Tenta fazer o parsing
+  // Try to parse
   return parsePixPayload(payload) !== null;
 }
 
 /**
- * Formata o nome do destinatário para exibição
+ * Formats recipient name for display
  */
 export function formatRecipientName(name: string): string {
-  // Lista de nomes comuns brasileiros para ajudar na separação
+  // List of common Brazilian names to help with separation
   const commonNames = ['LUCAS', 'BISPO', 'SILVA', 'SANTOS', 'OLIVEIRA', 'SOUZA', 'LIMA', 'COSTA', 'PEREIRA', 'RODRIGUES', 'ALMEIDA', 'NASCIMENTO', 'CARVALHO', 'GOMES', 'MARTINS', 'ARAUJO', 'MELO', 'BARBOSA', 'RIBEIRO', 'MONTEIRO'];
   
   let formattedName = name.toUpperCase();
   
-  // Se o nome não tem espaços, tentar separar usando nomes comuns
+  // If name has no spaces, try to separate using common names
   if (!name.includes(' ') && name.length > 0) {
     for (const commonName of commonNames) {
       if (formattedName.includes(commonName)) {
@@ -188,12 +188,12 @@ export function formatRecipientName(name: string): string {
       }
     }
     
-    // Limpar espaços extras
+    // Clean extra spaces
     formattedName = formattedName.replace(/\s+/g, ' ').trim();
     
-    // Se ainda não conseguiu separar, usar heurística simples
+    // If still couldn't separate, use simple heuristic
     if (!formattedName.includes(' ') && formattedName.length > 6) {
-      // Tentar separar no meio para nomes longos
+      // Try to separate in the middle for long names
       const middle = Math.floor(formattedName.length / 2);
       formattedName = formattedName.slice(0, middle) + ' ' + formattedName.slice(middle);
     }
@@ -207,7 +207,7 @@ export function formatRecipientName(name: string): string {
 }
 
 /**
- * Formata o valor para exibição em BRL
+ * Formats amount for display in BRL
  */
 export function formatPixAmount(amount: string): string {
   const numericAmount = parseFloat(amount);

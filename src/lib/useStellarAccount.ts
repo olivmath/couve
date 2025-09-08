@@ -13,7 +13,7 @@ export interface UseStellarAccountReturn {
 }
 
 /**
- * Hook personalizado para gerenciar conta Stellar integrada com Stack Auth
+ * Custom hook to manage Stellar account integrated with Stack Auth
  */
 export const useStellarAccount = (): UseStellarAccountReturn => {
   const user = useUser();
@@ -24,7 +24,7 @@ export const useStellarAccount = (): UseStellarAccountReturn => {
   const [balance, setBalance] = useState(0);
 
   /**
-   * Atualiza o saldo da conta
+   * Updates the account balance
    */
   const refreshBalance = async () => {
     if (!stellarAccount) return;
@@ -33,16 +33,16 @@ export const useStellarAccount = (): UseStellarAccountReturn => {
       const newBalance = await StellarService.getAccountBalance(stellarAccount.publicKey, networkType);
       setBalance(newBalance);
     } catch (err) {
-      console.error('Erro ao atualizar saldo:', err);
+      console.error('Error updating balance:', err);
     }
   };
 
   /**
-   * Cria uma nova conta Stellar para o usuário
+   * Creates a new Stellar account for the user
    */
   const createAccount = async () => {
     if (!user?.id) {
-      setError('Usuário não autenticado');
+      setError('User not authenticated');
       return;
     }
 
@@ -50,54 +50,54 @@ export const useStellarAccount = (): UseStellarAccountReturn => {
     setError(null);
 
     try {
-      // Tentar carregar conta existente do storage primeiro
+      // Try to load existing account from storage first
       let account = StellarService.loadAccountFromStorage(user.id);
       
       if (!account) {
-        // Se não existe no storage, criar nova conta
+        // If it doesn't exist in storage, create new account
         account = await StellarService.createAndFundAccount(user.id, networkType);
         
         if (!account) {
-          throw new Error('Falha ao criar conta Stellar');
+          throw new Error('Failed to create Stellar account');
         }
         
-        // Salvar no storage para persistência
+        // Save to storage for persistence
         StellarService.saveAccountToStorage(user.id, account);
       }
       
       setStellarAccount(account);
       
-      // Atualizar saldo
+      // Update balance
       await refreshBalance();
       
     } catch (err: any) {
-      setError(err.message || 'Erro ao criar conta Stellar');
-      console.error('Erro ao criar conta:', err);
+      setError(err.message || 'Error creating Stellar account');
+      console.error('Error creating account:', err);
     } finally {
       setIsLoading(false);
     }
   };
 
   /**
-   * Carrega a conta quando o usuário faz login ou quando a rede muda
+   * Loads the account when user logs in or when network changes
    */
   useEffect(() => {
     if (user?.id) {
-      // Tentar carregar conta existente do storage
+      // Try to load existing account from storage
       const storedAccount = StellarService.loadAccountFromStorage(user.id);
       
       if (storedAccount) {
         setStellarAccount(storedAccount);
         refreshBalance();
       } else {
-        // Se não existe conta, criar automaticamente
+        // If no account exists, create automatically
         createAccount();
       }
     }
   }, [user?.id]);
 
   /**
-   * Atualiza o saldo quando a rede muda
+   * Updates balance when network changes
    */
   useEffect(() => {
     if (stellarAccount) {
@@ -106,7 +106,7 @@ export const useStellarAccount = (): UseStellarAccountReturn => {
   }, [networkType, stellarAccount]);
 
   /**
-   * Limpa a conta quando o usuário faz logout
+   * Clears account when user logs out
    */
   useEffect(() => {
     if (!user) {

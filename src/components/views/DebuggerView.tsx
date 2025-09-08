@@ -30,8 +30,8 @@ const DebuggerView: React.FC = () => {
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
         <h3 className="font-semibold text-yellow-800 mb-2">🔧 Ferramenta de Debug</h3>
         <p className="text-sm text-yellow-700">
-          Esta ferramenta permite monitorar em tempo real os preços do KALE e testar 
-          os serviços de preços para identificar problemas de conectividade ou dados inválidos.
+          This tool allows real-time monitoring of KALE prices and testing 
+          price services to identify connectivity issues or invalid data.
         </p>
       </div>
 
@@ -40,10 +40,10 @@ const DebuggerView: React.FC = () => {
 
       {/* Additional Debug Info */}
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-        <h3 className="font-semibold text-gray-800 mb-2">ℹ️ Informações</h3>
+        <h3 className="font-semibold text-gray-800 mb-2">ℹ️ Information</h3>
         <div className="text-sm text-gray-600 space-y-1">
           <p>• <strong>Test Services:</strong> Testa conectividade com APIs externas</p>
-          <p>• <strong>Update Prices:</strong> Força atualização manual dos preços</p>
+          <p>• <strong>Update Prices:</strong> Forces manual price update</p>
           <p>• <strong>Store Values:</strong> Valores atuais armazenados no estado</p>
           <p>• <strong>Debug Results:</strong> Resultados detalhados dos testes</p>
         </div>

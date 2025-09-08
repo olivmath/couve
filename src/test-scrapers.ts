@@ -1,12 +1,12 @@
-// Arquivo de teste para verificar se os scrapers estão funcionando
+// Test file to verify if scrapers are working
 
 import StellarExpertScraper from './lib/stellarExpertScraper';
 import LumaScraper from './lib/lumaScraper';
 import PriceService from './lib/priceService';
 
-// Função para testar o scraper do Stellar Expert
+// Function to test the Stellar Expert scraper
 export async function testStellarExpertScraper() {
-  console.log('🔍 Testando StellarExpertScraper...');
+  console.log('🔍 Testing StellarExpertScraper...');
   
   try {
     const poolData = await StellarExpertScraper.getPoolData();
@@ -17,14 +17,14 @@ export async function testStellarExpertScraper() {
     
     return { success: true, poolData, kalePrice };
   } catch (error) {
-    console.error('❌ Erro no StellarExpertScraper:', error);
+    console.error('❌ Error in StellarExpertScraper:', error);
     return { success: false, error };
   }
 }
 
-// Função para testar o scraper do Luma
+// Function to test the Luma scraper
 export async function testLumaScraper() {
-  console.log('🔍 Testando LumaScraper...');
+  console.log('🔍 Testing LumaScraper...');
   
   try {
     const events = await LumaScraper.getEvents();
@@ -32,14 +32,14 @@ export async function testLumaScraper() {
     
     return { success: true, events };
   } catch (error) {
-    console.error('❌ Erro no LumaScraper:', error);
+    console.error('❌ Error in LumaScraper:', error);
     return { success: false, error };
   }
 }
 
-// Função para testar o PriceService atualizado
+// Function to test the updated PriceService
 export async function testPriceService() {
-  console.log('🔍 Testando PriceService...');
+  console.log('🔍 Testing PriceService...');
   
   try {
     const kalePriceBRL = await PriceService.getKalePrice();
@@ -53,20 +53,20 @@ export async function testPriceService() {
     
     return { success: true, kalePriceBRL, kalePriceUSD, kalePriceFromPool };
   } catch (error) {
-    console.error('❌ Erro no PriceService:', error);
+    console.error('❌ Error in PriceService:', error);
     return { success: false, error };
   }
 }
 
-// Função principal para executar todos os testes
+// Main function to run all tests
 export async function runAllTests() {
-  console.log('🚀 Iniciando testes dos scrapers...');
+  console.log('🚀 Starting scraper tests...');
   
   const stellarTest = await testStellarExpertScraper();
   const lumaTest = await testLumaScraper();
   const priceTest = await testPriceService();
   
-  console.log('📊 Resultados dos testes:');
+  console.log('📊 Test results:');
   console.log('- StellarExpertScraper:', stellarTest.success ? '✅' : '❌');
   console.log('- LumaScraper:', lumaTest.success ? '✅' : '❌');
   console.log('- PriceService:', priceTest.success ? '✅' : '❌');
@@ -78,9 +78,9 @@ export async function runAllTests() {
   };
 }
 
-// Executar testes automaticamente se este arquivo for importado
+// Run tests automatically if this file is imported
 if (typeof window !== 'undefined') {
-  // Executar testes após 2 segundos para dar tempo da aplicação carregar
+  // Run tests after 2 seconds to give the application time to load
   setTimeout(() => {
     runAllTests();
   }, 2000);

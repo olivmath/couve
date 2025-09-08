@@ -59,7 +59,7 @@ const AuthView: React.FC<AuthViewProps> = ({ mode = 'signin' }) => {
           </p>
         </div>
 
-        {/* Formulário de autenticação */}
+        {/* Authentication form */}
         <div className="bg-white rounded-lg shadow-lg p-6">
           {mode === 'signin' ? (
             <SignIn />

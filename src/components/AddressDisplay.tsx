@@ -19,7 +19,7 @@ const AddressDisplay: React.FC<AddressDisplayProps> = ({
 }) => {
   const [copied, setCopied] = React.useState(false);
   
-  // Função para resumir o endereço (primeiros 6 e últimos 4 caracteres)
+  // Function to summarize the address (first 6 and last 4 characters)
   const shortenAddress = (addr: string) => {
     if (!addr) return '';
     return `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
@@ -51,7 +51,7 @@ const AddressDisplay: React.FC<AddressDisplayProps> = ({
           <button 
             onClick={handleCopy}
             className="p-1 rounded-md hover:bg-green-100 transition-colors"
-            title="Copiar endereço"
+            title="Copy address"
           >
             {copied ? (
               <span className="text-xs text-green-600 font-medium">Copiado!</span>

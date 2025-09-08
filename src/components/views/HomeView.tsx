@@ -9,10 +9,10 @@ const HomeView: React.FC = () => {
   const { kaleToBRL, kaleToUSD, setStellarBalance, setStellarAccount, updateKalePrice } = useWalletStore();
   const { stellarAccount, balance, refreshBalance } = useStellarAccount();
   
-  // Por enquanto, assumir que o balance já representa KALE
+  // For now, assume that balance already represents KALE
   const kaleBalance = balance;
 
-  // Sincronizar o saldo Stellar com o wallet store
+  // Synchronize Stellar balance with wallet store
   useEffect(() => {
     if (stellarAccount) {
       setStellarAccount(stellarAccount);
@@ -20,26 +20,26 @@ const HomeView: React.FC = () => {
     }
   }, [stellarAccount, balance, setStellarAccount, setStellarBalance]);
 
-  // Atualizar saldo e preço periodicamente
+  // Update balance and price periodically
   useEffect(() => {
     if (stellarAccount) {
-      console.log('⏰ [HomeView] Configurando intervalo para atualização periódica...');
+      console.log('⏰ [HomeView] Setting up interval for periodic updates...');
       const interval = setInterval(() => {
-        console.log('🔄 [HomeView] Executando atualização periódica...');
+        console.log('🔄 [HomeView] Running periodic update...');
         refreshBalance();
         updateKalePrice();
-      }, 30000); // Atualizar a cada 30 segundos
+      }, 30000); // Update every 30 seconds
 
       return () => {
-        console.log('🛑 [HomeView] Limpando intervalo de atualização');
+        console.log('🛑 [HomeView] Clearing update interval');
         clearInterval(interval);
       };
     }
   }, [stellarAccount, refreshBalance, updateKalePrice]);
 
-  // Atualizar preço do KALE na inicialização
+  // Update KALE price on initialization
   useEffect(() => {
-    console.log('🚀 [HomeView] Atualizando preço do KALE na inicialização...');
+    console.log('🚀 [HomeView] Updating KALE price on initialization...');
     updateKalePrice();
   }, [updateKalePrice]);
 

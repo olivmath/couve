@@ -22,7 +22,7 @@ const MeridianEventsCarousel: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loadingProgress, setLoadingProgress] = useState(0);
 
-  // Função para carregar eventos progressivamente
+  // Function to load events progressively
   const loadEventsProgressively = async () => {
     try {
       setLoading(true);
@@ -38,7 +38,7 @@ const MeridianEventsCarousel: React.FC = () => {
         setEvents([...loadedEvents]);
         setLoadingProgress(loadedEvents.length);
         
-        // Se é o primeiro evento, parar o loading geral
+        // If it's the first event, stop general loading
         if (loadedEvents.length === 1) {
           setLoading(false);
         }
@@ -68,9 +68,9 @@ const MeridianEventsCarousel: React.FC = () => {
     window.open(url, '_blank');
   };
 
-  // Sistema de cores e formas aleatórias criativo
+  // Creative random colors and shapes system
   const getRandomCardStyle = (eventId: string) => {
-    // Usar o ID do evento como seed para consistência
+    // Use event ID as seed for consistency
     const seed = eventId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     
     const gradients = [
@@ -87,7 +87,7 @@ const MeridianEventsCarousel: React.FC = () => {
     ];
     
     const patterns = [
-      // Círculos flutuantes
+      // Floating circles
       {
         elements: [
           { shape: 'circle', size: 'w-32 h-32', position: 'top-0 right-0 -translate-y-16 translate-x-16', opacity: 'opacity-20' },
@@ -95,7 +95,7 @@ const MeridianEventsCarousel: React.FC = () => {
           { shape: 'circle', size: 'w-16 h-16', position: 'top-1/2 left-1/2 -translate-x-8 -translate-y-8', opacity: 'opacity-25' }
         ]
       },
-      // Formas geométricas
+      // Geometric shapes
       {
         elements: [
           { shape: 'square', size: 'w-28 h-28', position: 'top-0 right-0 -translate-y-14 translate-x-14 rotate-45', opacity: 'opacity-20' },
@@ -111,7 +111,7 @@ const MeridianEventsCarousel: React.FC = () => {
           { shape: 'circle', size: 'w-6 h-6', position: 'top-1/4 left-1/4', opacity: 'opacity-40' }
         ]
       },
-      // Hexágonos
+      // Hexagons
       {
         elements: [
           { shape: 'hexagon', size: 'w-24 h-24', position: 'top-0 right-0 -translate-y-12 translate-x-12', opacity: 'opacity-25' },
@@ -119,7 +119,7 @@ const MeridianEventsCarousel: React.FC = () => {
           { shape: 'circle', size: 'w-8 h-8', position: 'top-2/3 right-1/3', opacity: 'opacity-35' }
         ]
       },
-      // Estrelas e formas orgânicas
+      // Stars and organic shapes
       {
         elements: [
           { shape: 'star', size: 'w-20 h-20', position: 'top-0 right-0 -translate-y-10 translate-x-10', opacity: 'opacity-25' },
@@ -292,7 +292,7 @@ const MeridianEventsCarousel: React.FC = () => {
                     </div>
                   </div>
                   
-                  {/* Botão de Inscrição */}
+                  {/* Registration Button */}
                   <div className="mt-auto">
                     <button 
                       onClick={(e) => {

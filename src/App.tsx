@@ -25,12 +25,12 @@ function App() {
     navigateToView,
   } = useWalletStore();
 
-  // Debug: Log do estado de autenticação
+  // Debug: Authentication state log
   React.useEffect(() => {
     console.log('Auth Debug:', { user: !!user, currentView, userEmail: user?.primaryEmail });
   }, [user, currentView]);
 
-  // Gerencia redirecionamento baseado no estado de autenticação
+  // Manages redirection based on authentication state
   React.useEffect(() => {
     if (!user && currentView !== 'signin' && currentView !== 'signup') {
       console.log('Redirecting to signin - user not authenticated');

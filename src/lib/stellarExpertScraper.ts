@@ -1,4 +1,4 @@
-// Serviço para fazer scraping dos dados do Stellar Expert
+// Service for scraping Stellar Expert data
 
 interface PoolData {
   totalValueLocked: number;
@@ -14,30 +14,30 @@ export class StellarExpertScraper {
   private static readonly POOL_URL = 'https://stellar.expert/explorer/public/liquidity-pool/cf227a44e39d7cff8c927bc48c9b4c03b06ec76c9da8dde9ae6930888b583a68';
   
   /**
-   * Busca dados do pool KALE/USDC via scraping
+   * Fetches KALE/USDC pool data via scraping
    */
   static async getPoolData(): Promise<PoolData> {
     try {
-      console.log('🌐 [StellarExpertScraper] Fazendo requisição para API do Stellar Expert...');
+      console.log('🌐 [StellarExpertScraper] Making request to Stellar Expert API...');
       
-      // Como não podemos fazer scraping direto do browser devido ao CORS,
-      // vamos usar uma abordagem alternativa com a API do Stellar Expert
+      // Since we can't do direct scraping from browser due to CORS,
+      // we'll use an alternative approach with Stellar Expert API
       const apiUrl = `https://api.stellar.expert/explorer/public/liquidity-pool/cf227a44e39d7cff8c927bc48c9b4c03b06ec76c9da8dde9ae6930888b583a68`;
-      console.log('🔗 [StellarExpertScraper] URL da API:', apiUrl);
+      console.log('🔗 [StellarExpertScraper] API URL:', apiUrl);
       
       const response = await fetch(apiUrl);
-      console.log('📡 [StellarExpertScraper] Status da resposta:', response.status, response.statusText);
+      console.log('📡 [StellarExpertScraper] Response status:', response.status, response.statusText);
       
       if (!response.ok) {
-        throw new Error(`Falha ao buscar dados do pool: ${response.status} ${response.statusText}`);
+        throw new Error(`Failed to fetch pool data: ${response.status} ${response.statusText}`);
       }
       
       const data = await response.json();
-      console.log('📋 [StellarExpertScraper] Dados brutos da API:', data);
+      console.log('📋 [StellarExpertScraper] Raw API data:', data);
       
-      // Extrair dados relevantes da resposta da API
+      // Extract relevant data from API response
       const reserves = data.reserves || [];
-      console.log('💰 [StellarExpertScraper] Reservas encontradas:', reserves);
+      console.log('💰 [StellarExpertScraper] Reserves found:', reserves);
       
       const usdcReserve = reserves.find((r: any) => r.asset?.code === 'USDC');
       const kaleReserve = reserves.find((r: any) => r.asset?.code === 'KALE');
@@ -48,20 +48,20 @@ export class StellarExpertScraper {
       const usdcLiquidity = parseFloat(usdcReserve?.amount || '0');
       const kaleLiquidity = parseFloat(kaleReserve?.amount || '0');
       
-      console.log('📊 [StellarExpertScraper] Liquidez USDC:', usdcLiquidity);
-      console.log('📊 [StellarExpertScraper] Liquidez KALE:', kaleLiquidity);
+      console.log('📊 [StellarExpertScraper] USDC Liquidity:', usdcLiquidity);
+      console.log('📊 [StellarExpertScraper] KALE Liquidity:', kaleLiquidity);
       
-      // Calcular preço KALE em USDC
+      // Calculate KALE price in USDC
       const kalePrice = usdcLiquidity > 0 && kaleLiquidity > 0 
         ? usdcLiquidity / kaleLiquidity 
         : 0;
       
-      console.log('💎 [StellarExpertScraper] Preço KALE calculado:', kalePrice);
+      console.log('💎 [StellarExpertScraper] Calculated KALE price:', kalePrice);
       
-      // Validar se o preço calculado é razoável
+      // Validate if calculated price is reasonable
       if (kalePrice <= 0 || kalePrice > 1) {
-        console.warn('⚠️ [StellarExpertScraper] Preço KALE suspeito:', kalePrice, 'usando fallback');
-        throw new Error(`Preço KALE inválido: ${kalePrice}`);
+        console.warn('⚠️ [StellarExpertScraper] Suspicious KALE price:', kalePrice, 'using fallback');
+        throw new Error(`Invalid KALE price: ${kalePrice}`);
       }
       
       const poolData = {
@@ -74,40 +74,40 @@ export class StellarExpertScraper {
         participants: data.accounts_count || 0
       };
       
-      console.log('✅ [StellarExpertScraper] Dados finais do pool:', poolData);
+      console.log('✅ [StellarExpertScraper] Final pool data:', poolData);
       return poolData;
     } catch (error) {
-      console.error('❌ [StellarExpertScraper] Erro ao buscar dados do pool:', error);
+      console.error('❌ [StellarExpertScraper] Error fetching pool data:', error);
       
-      // Fallback: tentar scraping via proxy ou usar dados estáticos
-      console.log('🔄 [StellarExpertScraper] Tentando fallback...');
+      // Fallback: try scraping via proxy or use static data
+      console.log('🔄 [StellarExpertScraper] Trying fallback...');
       return this.getFallbackPoolData();
     }
   }
   
   /**
-   * Tenta fazer scraping via proxy ou retorna dados estáticos como fallback
+   * Tries scraping via proxy or returns static data as fallback
    */
   private static async getFallbackPoolData(): Promise<PoolData> {
     try {
-      // Tentar usar um proxy CORS para fazer scraping
+      // Try using a CORS proxy for scraping
       const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(this.POOL_URL)}`;
       const response = await fetch(proxyUrl);
       
       if (!response.ok) {
-        throw new Error('Proxy falhou');
+        throw new Error('Proxy failed');
       }
       
       const data = await response.json();
       const html = data.contents;
       
-      // Fazer parsing do HTML para extrair dados
+      // Parse HTML to extract data
       const poolData = this.parsePoolDataFromHTML(html);
       return poolData;
     } catch (error) {
-      console.error('Fallback também falhou:', error);
+      console.error('Fallback also failed:', error);
       
-      // Retornar dados estáticos baseados na última consulta conhecida
+      // Return static data based on last known query
       return {
         totalValueLocked: 3557,
         usdcLiquidity: 1776,
@@ -121,11 +121,11 @@ export class StellarExpertScraper {
   }
   
   /**
-   * Faz parsing dos dados do HTML
+   * Parses data from HTML
    */
   private static parsePoolDataFromHTML(html: string): PoolData {
     try {
-      // Usar regex para extrair dados específicos do HTML
+      // Use regex to extract specific data from HTML
       const tvlMatch = html.match(/Total value locked:[^~]*~([\d,]+)\s*USD/);
       const usdcMatch = html.match(/([\d,]+(?:\.\d+)?)\s*USDC/);
       const kaleMatch = html.match(/([\d,]+(?:\.\d+)?)\s*KALE/);
@@ -152,9 +152,9 @@ export class StellarExpertScraper {
         participants
       };
     } catch (error) {
-      console.error('Erro ao fazer parsing do HTML:', error);
+      console.error('Error parsing HTML:', error);
       
-      // Retornar dados padrão em caso de erro
+      // Return default data in case of error
       return {
         totalValueLocked: 3557,
         usdcLiquidity: 1776,
@@ -168,7 +168,7 @@ export class StellarExpertScraper {
   }
   
   /**
-   * Busca apenas o preço do KALE em USDC
+   * Fetches only the KALE price in USDC
    */
   static async getKalePrice(): Promise<number> {
     const poolData = await this.getPoolData();

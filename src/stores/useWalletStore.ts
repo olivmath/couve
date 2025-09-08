@@ -22,7 +22,7 @@ interface PaymentData {
 }
 
 interface WalletState {
-  // Estado
+  // State
   balance: number;
   stellarBalance: number;
   stellarAccount: StellarAccount | null;
@@ -38,7 +38,7 @@ interface WalletState {
   paymentData: PaymentData | null;
   networkType: NetworkType;
   
-  // Ações
+  // Actions
   setPixAmount: (amount: string) => void;
   setPixKey: (key: string) => void;
   handleSendPIX: () => void;
@@ -66,7 +66,7 @@ interface WalletState {
 }
 
 export const useWalletStore = create<WalletState>((set, get) => ({
-  // Estado inicial
+  // Initial state
   balance: 0,
   stellarBalance: 0,
   stellarAccount: null,
@@ -81,10 +81,10 @@ export const useWalletStore = create<WalletState>((set, get) => ({
   paymentData: null,
   networkType: 'testnet',
   transactions: [
-    { id: '1', type: 'pix_sent', amount: -21.00, date: '2025-08-28', description: 'Mercado Orgânico Verde' },
-    { id: '2', type: 'pix_sent', amount: -8.40, date: '2025-08-27', description: 'Feira do Produtor' },
+    { id: '1', type: 'pix_sent', amount: -21.00, date: '2025-08-28', description: 'Green Organic Market' },
+    { id: '2', type: 'pix_sent', amount: -8.40, date: '2025-08-27', description: 'Producer Fair' },
     { id: '3', type: 'harvest', amount: 500.00, date: '2025-08-26', description: 'Harvest Reward' },
-    { id: '4', type: 'pix_sent', amount: -6.30, date: '2025-08-26', description: 'Loja de Sementes' }
+    { id: '4', type: 'pix_sent', amount: -6.30, date: '2025-08-26', description: 'Seed Store' }
   ],
   
   // Setters
@@ -100,40 +100,40 @@ export const useWalletStore = create<WalletState>((set, get) => ({
   setNetworkType: (networkType) => set({ networkType }),
 
   
-  // Atualizar preço do KALE em BRL e USD
+  // Update KALE price in BRL and USD
   updateKalePrice: async () => {
     try {
-      console.log('🔄 [WalletStore] Iniciando atualização de preços do KALE...');
+      console.log('🔄 [WalletStore] Starting KALE price update...');
       
       const [priceBRL, priceUSD] = await Promise.all([
         PriceService.getKalePrice(),
         PriceService.getKalePriceUSD()
       ]);
       
-      console.log('💰 [WalletStore] Preços obtidos - BRL:', priceBRL, 'USD:', priceUSD);
+      console.log('💰 [WalletStore] Prices obtained - BRL:', priceBRL, 'USD:', priceUSD);
       
-      // Validar se os preços são válidos antes de atualizar
+      // Validate if prices are valid before updating
       if (typeof priceBRL === 'number' && priceBRL > 0 && 
           typeof priceUSD === 'number' && priceUSD > 0) {
         set({ kaleToBRL: priceBRL, kaleToUSD: priceUSD });
-        console.log('✅ [WalletStore] Preços atualizados no store');
+        console.log('✅ [WalletStore] Prices updated in store');
       } else {
-        console.warn('⚠️ [WalletStore] Preços inválidos recebidos, mantendo valores atuais:', { priceBRL, priceUSD });
+        console.warn('⚠️ [WalletStore] Invalid prices received, keeping current values:', { priceBRL, priceUSD });
       }
     } catch (error) {
-      console.error('❌ [WalletStore] Erro ao atualizar preço do KALE:', error);
-      // Não atualizar os preços em caso de erro, manter os valores atuais
+      console.error('❌ [WalletStore] Error updating KALE price:', error);
+      // Don't update prices in case of error, keep current values
     }
   },
   
-  // Ações
+  // Actions
   handleSendPIX: () => {
     const { paymentData } = get();
     if (!paymentData) return;
     
     set({ isProcessing: true });
     
-    // Simular processamento PIX
+    // Simulate PIX processing
     setTimeout(() => {
       const { balance, kaleToBRL } = get();
       const kaleAmount = parseFloat(paymentData.amount) / kaleToBRL;
@@ -156,7 +156,7 @@ export const useWalletStore = create<WalletState>((set, get) => ({
   startPixKeyInput: () => set({ currentView: 'pix_key_input' }),
   
   handleQRScanSuccess: (qrData) => {
-    // Tentar fazer parsing do QR Code PIX
+    // Try to parse PIX QR Code
     const pixData = parsePixPayload(qrData);
     
     if (pixData) {
@@ -170,7 +170,7 @@ export const useWalletStore = create<WalletState>((set, get) => ({
         currentView: 'confirmation'
       });
     } else {
-      // Fallback para QR codes simples (apenas chave PIX)
+      // Fallback for simple QR codes (PIX key only)
       const detectedType = detectPixKeyType(qrData);
       if (get().isValidPixKey(qrData, detectedType)) {
         set({
@@ -182,7 +182,7 @@ export const useWalletStore = create<WalletState>((set, get) => ({
           currentView: 'confirmation'
         });
       } else {
-        alert('QR Code PIX inválido');
+        alert('Invalid PIX QR Code');
       }
     }
   },
@@ -191,7 +191,7 @@ export const useWalletStore = create<WalletState>((set, get) => ({
     try {
       const clipboardText = await navigator.clipboard.readText();
       
-      // Primeiro, tentar fazer parsing como payload PIX completo
+      // First, try to parse as complete PIX payload
       if (isValidPixPayload(clipboardText)) {
         const pixData = parsePixPayload(clipboardText);
         if (pixData) {
@@ -208,7 +208,7 @@ export const useWalletStore = create<WalletState>((set, get) => ({
         }
       }
       
-      // Fallback para chave PIX simples
+      // Fallback for simple PIX key
       const detectedType = detectPixKeyType(clipboardText);
       if (get().isValidPixKey(clipboardText, detectedType)) {
         set({
@@ -220,10 +220,10 @@ export const useWalletStore = create<WalletState>((set, get) => ({
           currentView: 'confirmation'
         });
       } else {
-        alert('Código PIX ou chave PIX inválida na área de transferência');
+        alert('Invalid PIX code or PIX key in clipboard');
       }
     } catch (error) {
-      alert('Erro ao acessar área de transferência');
+      alert('Error accessing clipboard');
     }
   },
   

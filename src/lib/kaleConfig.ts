@@ -1,6 +1,6 @@
 import { NetworkType } from '../stores/useWalletStore';
 
-// Configurações KALE por rede
+// KALE configurations by network
 export const KALE_CONFIG = {
   mainnet: {
     ASSET_CODE: 'KALE',
@@ -18,12 +18,12 @@ export const KALE_CONFIG = {
   }
 };
 
-// Função para obter configuração KALE baseada na rede
+// Function to get KALE configuration based on network
 export const getKaleConfig = (networkType: NetworkType) => {
   return KALE_CONFIG[networkType];
 };
 
-// Função para obter o asset completo KALE:ISSUER
+// Function to get the complete KALE:ISSUER asset
 export const getKaleAsset = (networkType: NetworkType) => {
   const config = getKaleConfig(networkType);
   return `${config.ASSET_CODE}:${config.ISSUER}`;
