@@ -1,6 +1,38 @@
 # CouvePIX - Official Kale Wallet for Meridian 
-
 The Kale wallet with PIX integration for the Meridian 2025 event.
+
+## Signin
+<img width="100" height="300" alt="sigin" src="https://github.com/user-attachments/assets/c97fc31c-ef91-4c30-bf52-75578588456b" />
+
+## Pay
+<img width="100" height="300" alt="home" src="https://github.com/user-attachments/assets/1b9a6960-503f-414e-8f92-5681f91c270a" />
+<img width="100" height="300" alt="pix" src="https://github.com/user-attachments/assets/90d1f67b-545e-4481-ab38-7092b8f982ee" />
+<img width="100" height="300" alt="key" src="https://github.com/user-attachments/assets/33f505dc-a499-4fff-b6ee-11708a9a507f" />
+<img width="100" height="300" alt="value" src="https://github.com/user-attachments/assets/2dae9902-99c8-4c47-8549-13debca6f31e" />
+<img width="100" height="300" alt="confirm" src="https://github.com/user-attachments/assets/5a955327-5c2f-4a50-b89a-3cfcbfc4a356" />
+<img width="100" height="300" alt="done" src="https://github.com/user-attachments/assets/a12ab0b3-8d98-4193-898b-f7ac34a08d1e" />
+
+## Deposit
+<img width="100" height="300" alt="deposit" src="https://github.com/user-attachments/assets/b0228706-7dfa-42bd-97c3-035e79dd1eff" />
+
+## History
+<img width="100" height="300" alt="history" src="https://github.com/user-attachments/assets/436d6ae1-ae0e-4a61-8134-c641ac0d5355" />
+
+## Events
+<img width="100" height="300" alt="events" src="https://github.com/user-attachments/assets/da5ac449-9cff-4070-837a-58204900115c" />
+
+## Profile
+<img width="100" height="300" alt="profile" src="https://github.com/user-attachments/assets/377cece6-6405-4193-95c9-1abb63a1dcdf" />
+<img width="100" height="300" alt="settings" src="https://github.com/user-attachments/assets/09290235-9a02-46a2-b6db-22adcc656ff6" />
+<img width="100" height="300" alt="mainnet" src="https://github.com/user-attachments/assets/41155b95-4abb-4ee0-b16e-aad41a7d8958" />
+<img width="100" height="300" alt="keys" src="https://github.com/user-attachments/assets/550f1a8e-4d7f-4e58-a9a5-7da13a3c6934" />
+<img width="100" height="300" alt="debug" src="https://github.com/user-attachments/assets/71388840-bd18-4504-aa32-40ad83f21f16" />
+
+
+
+
+
+## Flow
 
 ```mermaid
 flowchart LR
